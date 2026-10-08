@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Cartoon Studio</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+  --bg:#10111a;
+  --panel:#191b28;
+  --panel2:#222536;
+  --text:#ffffff;
+  --muted:#aeb4c7;
+  --accent:#8b5cf6;
+  --accent2:#a78bfa;
+  --danger:#ef4444;
+  --green:#22c55e;
+  --border:#34384d;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  overflow-x:hidden;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.app{
+  min-height:100vh;
+}
+
+/* HEADER */
+
+.header{
+  height:64px;
+  background:#151621;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 14px;
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-weight:800;
+  font-size:18px;
+}
+
+.logo-icon{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#8b5cf6,#c084fc);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+}
+
+.header-actions{
+  display:flex;
+  gap:7px;
+}
+
+.icon-btn{
+  background:var(--panel2);
+  color:white;
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:9px 11px;
+}
+
+.icon-btn:hover{
+  background:#303449;
+}
+
+/* MAIN */
+
+.workspace{
+  display:flex;
+  min-height:calc(100vh - 64px);
+}
+
+/* LEFT */
+
+.sidebar{
+  width:230px;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  padding:12px;
+  flex-shrink:0;
+}
+
+.section-title{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:bold;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin:12px 5px 7px;
+}
+
+.tool{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:11px;
+  color:white;
+  background:transparent;
+  border-radius:9px;
+  text-align:left;
+  margin-bottom:4px;
+}
+
+.tool:hover,
+.tool.active{
+  background:#2b2e43;
+}
+
+.tool-icon{
+  width:28px;
+  text-align:center;
+}
+
+/* CENTER */
+
+.editor{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  background:#0d0e15;
+}
+
+.topbar{
+  min-height:50px;
+  background:#151621;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 12px;
+  gap:8px;
+}
+
+.scene-name{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.scene-name input{
+  background:#222536;
+  border:1px solid var(--border);
+  color:white;
+  border-radius:7px;
+  padding:7px 9px;
+  width:160px;
+  outline:none;
+}
+
+.top-controls{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  background:#292d40;
+  color:white;
+  border:1px solid var(--border);
+  padding:8px 11px;
+  border-radius:8px;
+}
+
+.btn:hover{
+  background:#363b52;
+}
+
+.btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+
+.btn.primary:hover{
+  background:#7c3aed;
+}
+
+.btn.green{
+  background:#166534;
+  border-color:#16a34a;
+}
+
+.btn.red{
+  background:#7f1d1d;
+  border-color:#ef4444;
+}
+
+/* CANVAS */
+
+.canvas-area{
+  flex:1;
+  padding:16px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:430px;
+  overflow:auto;
+}
+
+.stage{
+  position:relative;
+  width:min(900px,94vw);
+  aspect-ratio:16/9;
+  background:#87ceeb;
+  border:2px solid #34384d;
+  border-radius:8px;
+  overflow:hidden;
+  box-shadow:0 15px 50px rgba(0,0,0,.35);
+  touch-action:none;
+}
+
+.sky{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(#72c9ff 0%,#bdeaff 68%,#dff7ff 100%);
+}
+
+.sun{
+  position:absolute;
+  width:70px;
+  height:70px;
+  background:#ffd54a;
+  border-radius:50%;
+  top:10%;
+  right:9%;
+  box-shadow:0 0 35px rgba(255,213,74,.65);
+}
+
+.ground{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:28%;
+  background:#63bd59;
+  border-top:4px solid #41913d;
+}
+
+.stage-text{
+  position:absolute;
+  top:7%;
+  left:5%;
+  color:#17324d;
+  font-size:clamp(13px,2vw,22px);
+  font-weight:bold;
+  text-shadow:0 1px 2px rgba(255,255,255,.5);
+}
+
+/* CHARACTERS */
+
+.character{
+  position:absolute;
+  width:90px;
+  height:145px;
+  cursor:grab;
+  user-select:none;
+  touch-action:none;
+  transform-origin:center bottom;
+}
+
+.character.selected{
+  outline:2px dashed white;
+  outline-offset:5px;
+}
+
+.head{
+  position:absolute;
+  width:65px;
+  height:65px;
+  left:12px;
+  top:0;
+  background:#f2b28e;
+  border-radius:50%;
+  border:3px solid #6b3c2c;
+}
+
+.hair{
+  position:absolute;
+  width:67px;
+  height:30px;
+  left:11px;
+  top:-2px;
+  background:#302016;
+  border-radius:40px 40px 10px 10px;
+  z-index:2;
+}
+
+.eye{
+  position:absolute;
+  width:7px;
+  height:9px;
+  background:#111;
+  border-radius:50%;
+  top:27px;
+  z-index:3;
+}
+
+.eye.left{
+  left:28px;
+}
+
+.eye.right{
+  left:49px;
+}
+
+.mouth{
+  position:absolute;
+  width:20px;
+  height:9px;
+  border-bottom:3px solid #7b2d26;
+  border-radius:50%;
+  left:34px;
+  top:44px;
+  z-index:3;
+}
+
+.body{
+  position:absolute;
+  width:55px;
+  height:65px;
+  left:18px;
+  top:61px;
+  background:#7656d8;
+  border-radius:17px 17px 8px 8px;
+}
+
+.arm{
+  position:absolute;
+  width:14px;
+  height:52px;
+  background:#f2b28e;
+  border:2px solid #6b3c2c;
+  border-radius:12px;
+  top:68px;
+  z-index:-1;
+}
+
+.arm.left{
+  left:8px;
+  transform:rotate(15deg);
+}
+
+.arm.right{
+  right:8px;
+  transform:rotate(-15deg);
+}
+
+.leg{
+  position:absolute;
+  width:17px;
+  height:48px;
+  background:#27304b;
+  border-radius:9px;
+  top:119px;
+  z-index:-1;
+}
+
+.leg.left{
+  left:28px;
+}
+
+.leg.right{
+  left:53px;
+}
+
+.character-name{
+  position:absolute;
+  top:-25px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.65);
+  color:#fff;
+  padding:3px 7px;
+  border-radius:5px;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+/* PROPS */
+
+.cloud{
+  position:absolute;
+  width:120px;
+  height:35px;
+  background:white;
+  border-radius:30px;
+  opacity:.85;
+}
+
+.cloud:before,
+.cloud:after{
+  content:"";
+  position:absolute;
+  background:white;
+  border-radius:50%;
+}
+
+.cloud:before{
+  width:50px;
+  height:50px;
+  left:20px;
+  bottom:0;
+}
+
+.cloud:after{
+  width:60px;
+  height:60px;
+  right:15px;
+  bottom:0;
+}
+
+/* DIALOGUE */
+
+.dialogue-box{
+  position:absolute;
+  left:5%;
+  right:5%;
+  bottom:5%;
+  min-height:58px;
+  background:rgba(0,0,0,.78);
+  border:2px solid rgba(255,255,255,.8);
+  border-radius:14px;
+  padding:12px 15px;
+  color:white;
+  font-size:clamp(12px,2vw,19px);
+  display:none;
+}
+
+.dialogue-box.show{
+  display:block;
+}
+
+.dialogue-name{
+  color:#c4b5fd;
+  font-weight:bold;
+  font-size:12px;
+  margin-bottom:3px;
+}
+
+/* RIGHT PANEL */
+
+.properties{
+  width:270px;
+  background:var(--panel);
+  border-left:1px solid var(--border);
+  padding:12px;
+  overflow-y:auto;
+  flex-shrink:0;
+}
+
+.property-group{
+  background:#202333;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:11px;
+  margin-bottom:10px;
+}
+
+.property-group h3{
+  margin:0 0 10px;
+  font-size:13px;
+}
+
+.field{
+  margin-bottom:9px;
+}
+
+.field label{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:4px;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  background:#11131d;
+  color:white;
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:8px;
+  outline:none;
+}
+
+.field textarea{
+  resize:vertical;
+  min-height:65px;
+}
+
+.row{
+  display:flex;
+  gap:7px;
+}
+
+.row .field{
+  flex:1;
+}
+
+.color-input{
+  height:38px;
+  padding:3px!important;
+}
+
+/* TIMELINE */
+
+.timeline{
+  height:190px;
+  background:#151621;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.timeline-header{
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 12px;
+  border-bottom:1px solid var(--border);
+}
+
+.timeline-controls{
+  display:flex;
+  gap:6px;
+}
+
+.timeline-body{
+  display:flex;
+  overflow-x:auto;
+  flex:1;
+}
+
+.track-labels{
+  width:100px;
+  flex-shrink:0;
+  background:#191b28;
+  border-right:1px solid var(--border);
+}
+
+.track-label{
+  height:48px;
+  border-bottom:1px solid var(--border);
+  padding:15px 8px;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.frames{
+  min-width:900px;
+  position:relative;
+}
+
+.ruler{
+  height:36px;
+  display:flex;
+  border-bottom:1px solid var(--border);
+}
+
+.tick{
+  width:60px;
+  flex-shrink:0;
+  border-right:1px solid #303449;
+  color:#8f95aa;
+  font-size:10px;
+  padding:7px 4px;
+}
+
+.track{
+  height:48px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  position:relative;
+}
+
+.keyframe{
+  width:15px;
+  height:15px;
+  background:#a78bfa;
+  transform:rotate(45deg);
+  position:absolute;
+  border-radius:2px;
+  cursor:pointer;
+}
+
+.playhead{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:#ef4444;
+  left:0;
+  z-index:10;
+  pointer-events:none;
+}
+
+/* MODAL */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:15px;
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modal-card{
+  width:min(500px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#1a1c29;
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:18px;
+  box-shadow:0 20px 70px rgba(0,0,0,.6);
+}
+
+.modal-card h2{
+  margin-top:0;
+}
+
+.modal-actions{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  margin-top:15px;
+}
+
+/* MOBILE */
+
+.mobile-tools{
+  display:none;
+}
+
+@media(max-width:900px){
+
+  .sidebar{
+    width:70px;
+    padding:7px;
+  }
+
+  .tool{
+    justify-content:center;
+    padding:11px 4px;
+  }
+
+  .tool span:last-child{
+    display:none;
+  }
+
+  .section-title{
+    display:none;
+  }
+
+  .properties{
+    width:220px;
+  }
+
+  .stage{
+    width:96vw;
+  }
+}
+
+@media(max-width:650px){
+
+  .header{
+    height:58px;
+  }
+
+  .logo span{
+    display:none;
+  }
+
+  .workspace{
+    display:block;
+  }
+
+  .sidebar{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100%;
+    height:62px;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    background:#181a27;
+    border-right:0;
+    border-top:1px solid var(--border);
+    z-index:60;
+    padding:4px;
+  }
+
+  .tool{
+    width:auto;
+    margin:0;
+    padding:7px 10px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    font-size:9px;
+  }
+
+  .tool span:last-child{
+    display:block;
+  }
+
+  .editor{
+    padding-bottom:62px;
+  }
+
+  .properties{
+    width:100%;
+    border-left:0;
+    border-top:1px solid var(--border);
+    max-height:none;
+  }
+
+  .canvas-area{
+    padding:7px;
+    min-height:250px;
+  }
+
+  .stage{
+    width:98vw;
+    border-radius:5px;
+  }
+
+  .topbar{
+    flex-wrap:wrap;
+  }
+
+  .scene-name input{
+    width:130px;
+  }
+
+  .timeline{
+    height:155px;
+  }
+
+  .frames{
+    min-width:720px;
+  }
+
+  .header-actions .icon-btn:nth-child(1),
+  .header-actions .icon-btn:nth-child(2){
+    display:none;
+  }
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:80px;
+  transform:translateX(-50%) translateY(20px);
+  background:#272b3d;
+  color:white;
+  border:1px solid var(--border);
+  padding:10px 15px;
+  border-radius:9px;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:200;
+  font-size:13px;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+
+  <div class="logo">
+    <div class="logo-icon">🎬</div>
+    <span>Cartoon Studio</span>
+  </div>
+
+  <div class="header-actions">
+    <button class="icon-btn" onclick="newProject()">＋ New</button>
+    <button class="icon-btn" onclick="saveProject()">💾 Save</button>
+    <button class="icon-btn" onclick="loadProject()">📂 Load</button>
+  </div>
+
+</header>
+
+<div class="workspace">
+
+<!-- LEFT TOOLBAR -->
+
+<aside class="sidebar">
+
+  <div class="section-title">Create</div>
+
+  <button class="tool active" onclick="selectTool(this,'select')">
+    <span class="tool-icon">🖱️</span>
+    <span>Select</span>
+  </button>
+
+  <button class="tool" onclick="addCharacter()">
+    <span class="tool-icon">🧍</span>
+    <span>Character</span>
+  </button>
+
+  <button class="tool" onclick="addCloud()">
+    <span class="tool-icon">☁️</span>
+    <span>Prop</span>
+  </button>
+
+  <button class="tool" onclick="openBackgrounds()">
+    <span class="tool-icon">🌄</span>
+    <span>Background</span>
+  </button>
+
+  <button class="tool" onclick="addDialogue()">
+    <span class="tool-icon">💬</span>
+    <span>Dialogue</span>
+  </button>
+
+  <div class="section-title">Scene</div>
+
+  <button class="tool" onclick="duplicateScene()">
+    <span class="tool-icon">📋</span>
+    <span>Duplicate</span>
+  </button>
+
+  <button class="tool" onclick="clearStage()">
+    <span class="tool-icon">🗑️</span>
+    <span>Clear</span>
+  </button>
+
+  <button class="tool" onclick="previewAnimation()">
+    <span class="tool-icon">▶️</span>
+    <span>Preview</span>
+  </button>
+
+</aside>
+
+<!-- EDITOR -->
+
+<main class="editor">
+
+  <div class="topbar">
+
+    <div class="scene-name">
+      <span>🎞️</span>
+      <input id="sceneName" value="Scene 1">
+    </div>
+
+    <div class="top-controls">
+      <button class="btn" onclick="undo()">↶</button>
+      <button class="btn" onclick="redo()">↷</button>
+      <button class="btn" onclick="addScene()">＋ Scene</button>
+      <button class="btn primary" onclick="exportProject()">📤 Export</button>
+    </div>
+
+  </div>
+
+  <div class="canvas-area">
+
+    <div class="stage" id="stage">
+
+      <div class="sky" id="sky"></div>
+
+      <div class="sun" id="sun"></div>
+
+      <div class="cloud" style="left:12%;top:14%;"></div>
+      <div class="cloud" style="left:42%;top:9%;transform:scale(.7);"></div>
+
+      <div class="ground"></div>
+
+      <div class="stage-text" id="stageText">
+        My Cartoon Episode
+      </div>
+
+      <div class="dialogue-box" id="dialogueBox">
+        <div class="dialogue-name" id="dialogueName">Character</div>
+        <div id="dialogueText">Hello! Welcome to my cartoon!</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PROPERTIES -->
+
+  <section class="properties">
+
+    <div class="property-group">
+
+      <h3>🎬 Scene Settings</h3>
+
+      <div class="field">
+        <label>Scene title</label>
+        <input id="sceneTitle" value="My Cartoon Episode"
+          oninput="updateSceneTitle(this.value)">
+      </div>
+
+      <div class="field">
+        <label>Duration (seconds)</label>
+        <input id="duration" type="number" min="1" max="120" value="10"
+          onchange="updateDuration(this.value)">
+      </div>
+
+    </div>
+
+    <div class="property-group">
+
+      <h3>🧍 Selected Character</h3>
+
+      <div class="field">
+        <label>Name</label>
+        <input id="charName" value="Character"
+          oninput="updateCharacterName(this.value)">
+      </div>
+
+      <div class="row">
+
+        <div class="field">
+          <label>X</label>
+          <input id="charX" type="number" onchange="updateCharacterPosition()">
+        </div>
+
+        <div class="field">
+          <label>Y</label>
+          <input id="charY" type="number" onchange="updateCharacterPosition()">
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        <div class="field">
+          <label>Scale</label>
+          <input id="charScale" type="number" step=".1" min=".3" max="3"
+            value="1" onchange="updateCharacterScale()">
+        </div>
+
+        <div class="field">
+          <label>Rotation</label>
+          <input id="charRotation" type="number"
+            value="0" onchange="updateCharacterRotation()">
+        </div>
+
+      </div>
+
+      <div class="field">
+        <label>Body color</label>
+        <input id="bodyColor" class="color-input" type="color"
+          value="#7656d8" onchange="updateBodyColor()">
+      </div>
+
+      <button class="btn red" style="width:100%"
+        onclick="deleteSelected()">Delete Character</button>
+
+    </div>
+
+    <div class="property-group">
+
+      <h3>💬 Dialogue</h3>
+
+      <div class="field">
+        <label>Character</label>
+        <input id="dialogueCharacter" value="Character"
+          oninput="updateDialogue()">
+      </div>
+
+      <div class="field">
+        <label>Text</label>
+        <textarea id="dialogueInput"
+          oninput="updateDialogue()">Hello! Welcome to my cartoon!</textarea>
+      </div>
+
+      <button class="btn primary" style="width:100%"
+        onclick="toggleDialogue()">Show / Hide Dialogue</button>
+
+    </div>
+
+  </section>
+
+  <!-- TIMELINE -->
+
+  <section class="timeline">
+
+    <div class="timeline-header">
+
+      <strong>🎞️ Timeline</strong>
+
+      <div class="timeline-controls">
+        <button class="btn" onclick="timelinePlay()">▶</button>
+        <button class="btn" onclick="timelinePause()">⏸</button>
+        <button class="btn" onclick="addKeyframe()">◆ Keyframe</button>
+      </div>
+
+    </div>
+
+    <div class="timeline-body">
+
+      <div class="track-labels">
+
+        <div class="track-label">Time</div>
+        <div class="track-label">Characters</div>
+        <div class="track-label">Dialogue</div>
+
+      </div>
+
+      <div class="frames">
+
+        <div class="ruler">
+
+          <div class="tick">0s</div>
+          <div class="tick">1s</div>
+          <div class="tick">2s</div>
+          <div class="tick">3s</div>
+          <div class="tick">4s</div>
+          <div class="tick">5s</div>
+          <div class="tick">6s</div>
+          <div class="tick">7s</div>
+          <div class="tick">8s</div>
+          <div class="tick">9s</div>
+          <div class="tick">10s</div>
+
+        </div>
+
+        <div class="track" id="characterTrack"></div>
+
+        <div class="track" id="dialogueTrack"></div>
+
+        <div class="playhead" id="playhead"></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+</div>
+
+</div>
+
+<!-- BACKGROUND MODAL -->
+
+<div class="modal" id="backgroundModal">
+
+  <div class="modal-card">
+
+    <h2>🌄 Choose Background</h2>
+
+    <div class="row">
+
+      <button class="btn" onclick="setBackground('day')">
+        ☀️ Day
+      </button>
+
+      <button class="btn" onclick="setBackground('sunset')">
+        🌅 Sunset
+      </button>
+
+      <button class="btn" onclick="setBackground('night')">
+        🌙 Night
+      </button>
+
+    </div>
+
+    <div class="row" style="margin-top:10px">
+
+      <button class="btn" onclick="setBackground('forest')">
+        🌲 Forest
+      </button>
+
+      <button class="btn" onclick="setBackground('city')">
+        🏙️ City
+      </button>
+
+      <button class="btn" onclick="setBackground('space')">
+        🚀 Space
+      </button>
+
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeBackgrounds()">Close</button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- EXPORT MODAL -->
+
+<div class="modal" id="exportModal">
+
+  <div class="modal-card">
+
+    <h2>📤 Export Cartoon</h2>
+
+    <p style="color:#aeb4c7">
+      Version 1 saves your cartoon project and prepares it for
+      future video export.
+    </p>
+
+    <div class="field">
+      <label>Episode title</label>
+      <input id="exportTitle" value="My Cartoon Episode">
+    </div>
+
+    <div class="field">
+      <label>Description</label>
+      <textarea id="exportDescription"
+        placeholder="Write your YouTube description..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Format</label>
+      <select id="exportFormat">
+        <option>16:9 YouTube</option>
+        <option>9:16 YouTube Shorts</option>
+        <option>1:1 Square</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeExport()">Cancel</button>
+      <button class="btn primary" onclick="finishExport()">Prepare Export</button>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+/* =========================================================
+   CARTOON STUDIO
+   Version 1
+   ========================================================= */
+
+let selectedCharacter = null;
+let characterCounter = 0;
+let keyframes = [];
+let isPlaying = false;
+let playTimer = null;
+let currentTime = 0;
+let history = [];
+let historyIndex = -1;
+
+/* =========================================================
+   BASIC UI
+   ========================================================= */
+
+function toast(message){
+
+  const el = document.getElementById("toast");
+
+  el.textContent = message;
+  el.classList.add("show");
+
+  setTimeout(()=>{
+    el.classList.remove("show");
+  },2200);
+}
+
+function selectTool(button,tool){
+
+  document.querySelectorAll(".tool").forEach(x=>{
+    x.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+}
+
+/* =========================================================
+   CHARACTERS
+   ========================================================= */
+
+function addCharacter(){
+
+  characterCounter++;
+
+  const char=document.createElement("div");
+
+  char.className="character";
+
+  char.dataset.id="character-"+characterCounter;
+
+  char.style.left=(15 + characterCounter*8)+"%";
+  char.style.bottom="23%";
+
+  char.innerHTML=`
+
+    <div class="character-name">
+      Character ${characterCounter}
+    </div>
+
+    <div class="hair"></div>
+
+    <div class="head">
+
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+
+      <div class="mouth"></div>
+
+    </div>
+
+    <div class="body"></div>
+
+    <div class="arm left"></div>
+    <div class="arm right"></div>
+
+    <div class="leg left"></div>
+    <div class="leg right"></div>
+
+  `;
+
+  document.getElementById("stage").appendChild(char);
+
+  makeDraggable(char);
+
+  selectCharacter(char);
+
+  saveHistory();
+
+  toast("Character added");
+
+}
+
+function selectCharacter(char){
+
+  document.querySelectorAll(".character").forEach(c=>{
+    c.classList.remove("selected");
+  });
+
+  char.classList.add("selected");
+
+  selectedCharacter=char;
+
+  updateCharacterPanel();
+
+}
+
+function makeDraggable(element){
+
+  let dragging=false;
+  let startX=0;
+  let startY=0;
+  let originalLeft=0;
+  let originalTop=0;
+
+  function start(e){
+
+    e.preventDefault();
+
+    selectCharacter(element);
+
+    dragging=true;
+
+    const point=e.touches ? e.touches[0] : e;
+
+    startX=point.clientX;
+    startY=point.clientY;
+
+    originalLeft=element.offsetLeft;
+    originalTop=element.offsetTop;
+
+    document.addEventListener("mousemove",move);
+    document.addEventListener("mouseup",end);
+
+    document.addEventListener("touchmove",move,{passive:false});
+    document.addEventListener("touchend",end);
+
+  }
+
+  function move(e){
+
+    if(!dragging)return;
+
+    e.preventDefault();
+
+    const point=e.touches ? e.touches[0] : e;
+
+    const stage=document.getElementById("stage");
+
+    let x=originalLeft+(point.clientX-startX);
+    let y=originalTop+(point.clientY-startY);
+
+    x=Math.max(0,Math.min(stage.clientWidth-element.offsetWidth,x));
+    y=Math.max(0,Math.min(stage.clientHeight-element.offsetHeight,y));
+
+    element.style.left=x+"px";
+    element.style.top=y+"px";
+    element.style.bottom="auto";
+
+    updateCharacterPanel();
+
+  }
+
+  function end(){
+
+    if(!dragging)return;
+
+    dragging=false;
+
+    document.removeEventListener("mousemove",move);
+    document.removeEventListener("mouseup",end);
+
+    document.removeEventListener("touchmove",move);
+    document.removeEventListener("touchend",end);
+
+    saveHistory();
+
+  }
+
+  element.addEventListener("mousedown",start);
+  element.addEventListener("touchstart",start,{passive:false});
+
+}
+
+function updateCharacterPanel(){
+
+  if(!selectedCharacter)return;
+
+  const c=selectedCharacter;
+
+  document.getElementById("charName").value=
+    c.querySelector(".character-name")?.textContent || "Character";
+
+  document.getElementById("charX").value=
+    Math.round(c.offsetLeft);
+
+  document.getElementById("charY").value=
+    Math.round(c.offsetTop);
+
+  const transform=c.style.transform || "";
+
+  const scaleMatch=transform.match(/scale\(([^)]+)\)/);
+  const rotateMatch=transform.match(/rotate\(([^)]+)deg\)/);
+
+  document.getElementById("charScale").value=
+    scaleMatch ? scaleMatch[1] : 1;
+
+  document.getElementById("charRotation").value=
+    rotateMatch ? rotateMatch[1] : 0;
+
+}
+
+function updateCharacterName(value){
+
+  if(!selectedCharacter)return;
+
+  selectedCharacter.querySelector(".character-name").textContent=value;
+
+  saveHistory();
+
+}
+
+function updateCharacterPosition(){
+
+  if(!selectedCharacter)return;
+
+  selectedCharacter.style.left=
+    document.getElementById("charX").value+"px";
+
+  selectedCharacter.style.top=
+    document.getElementById("charY").value+"px";
+
+  selectedCharacter.style.bottom="auto";
+
+  saveHistory();
+
+}
+
+function updateCharacterScale(){
+
+  if(!selectedCharacter)return;
+
+  const scale=document.getElementById("charScale").value || 1;
+
+  const rotation=document.getElementById("charRotation").value || 0;
+
+  selectedCharacter.style.transform=
+    `scale(${scale}) rotate(${rotation}deg)`;
+
+  saveHistory();
+
+}
+
+function updateCharacterRotation(){
+
+  updateCharacterScale();
+
+}
+
+function updateBodyColor(){
+
+  if(!selectedCharacter)return;
+
+  const color=document.getElementById("bodyColor").value;
+
+  selectedCharacter.querySelector(".body").style.background=color;
+
+  saveHistory();
+
+}
+
+function deleteSelected(){
+
+  if(!selectedCharacter){
+
+    toast("Select a character first");
+    return;
+
+  }
+
+  selectedCharacter.remove();
+
+  selectedCharacter=null;
+
+  saveHistory();
+
+  toast("Character deleted");
+
+}
+
+/* =========================================================
+   PROPS
+   ========================================================= */
+
+function addCloud(){
+
+  const cloud=document.createElement("div");
+
+  cloud.className="cloud";
+
+  cloud.style.left="30%";
+  cloud.style.top="20%";
+
+  document.getElementById("stage").appendChild(cloud);
+
+  toast("Cloud added");
+
+}
+
+function clearStage(){
+
+  document.querySelectorAll(".character,.cloud").forEach(el=>{
+    el.remove();
+  });
+
+  selectedCharacter=null;
+
+  document.getElementById("dialogueBox").classList.remove("show");
+
+  saveHistory();
+
+  toast("Scene cleared");
+
+}
+
+/* =========================================================
+   BACKGROUNDS
+   ========================================================= */
+
+function openBackgrounds(){
+
+  document.getElementById("backgroundModal").classList.add("open");
+
+}
+
+function closeBackgrounds(){
+
+  document.getElementById("backgroundModal").classList.remove("open");
+
+}
+
+function setBackground(type){
+
+  const sky=document.getElementById("sky");
+  const ground=document.querySelector(".ground");
+  const sun=document.getElementById("sun");
+
+  if(type==="day"){
+
+    sky.style.background=
+      "linear-gradient(#72c9ff,#dff7ff)";
+
+    ground.style.background="#63bd59";
+
+    sun.style.display="block";
+
+  }
+
+  if(type==="sunset"){
+
+    sky.style.background=
+      "linear-gradient(#ff7e79,#ffc76b 55%,#8d7cc7)";
+
+    ground.style.background="#43553f";
+
+    sun.style.display="block";
+
+  }
+
+  if(type==="night"){
+
+    sky.style.background=
+      "linear-gradient(#08122f,#16234e,#263c66)";
+
+    ground.style.background="#16251c";
+
+    sun.style.display="none";
+
+  }
+
+  if(type==="forest"){
+
+    sky.style.background=
+      "linear-gradient(#78c9ee,#d4f1df)";
+
+    ground.style.background="#2f8d45";
+
+    sun.style.display="block";
+
+  }
+
+  if(type==="city"){
+
+    sky.style.background=
+      "linear-gradient(#7898bd,#d6d9df)";
+
+    ground.style.background="#555";
+
+    sun.style.display="none";
+
+  }
+
+  if(type==="space"){
+
+    sky.style.background=
+      "radial-gradient(circle at 30% 30%,#38468c,#080a18 65%)";
+
+    ground.style.display="none";
+
+    sun.style.display="none";
+
+  }else{
+
+    ground.style.display="block";
+
+  }
+
+  closeBackgrounds();
+
+  saveHistory();
+
+  toast(type+" background selected");
+
+}
+
+/* =========================================================
+   DIALOGUE
+   ========================================================= */
+
+function addDialogue(){
+
+  document.getElementById("dialogueBox").classList.add("show");
+
+  toast("Dialogue added");
+
+}
+
+function toggleDialogue(){
+
+  document.getElementById("dialogueBox")
+    .classList.toggle("show");
+
+}
+
+function updateDialogue(){
+
+  document.getElementById("dialogueName").textContent=
+    document.getElementById("dialogueCharacter").value;
+
+  document.getElementById("dialogueText").textContent=
+    document.getElementById("dialogueInput").value;
+
+}
+
+/* =========================================================
+   SCENE
+   ========================================================= */
+
+function updateSceneTitle(value){
+
+  document.getElementById("stageText").textContent=value;
+
+}
+
+function updateDuration(value){
+
+  if(value<1)value=1;
+  if(value>120)value=120;
+
+  document.getElementById("duration").value=value;
+
+}
+
+function addScene(){
+
+  const sceneCount=
+    document.querySelectorAll(".scene-item").length+1;
+
+  toast("Scene "+sceneCount+" created");
+
+}
+
+function duplicateScene(){
+
+  const chars=
+    [...document.querySelectorAll(".character")];
+
+  chars.forEach(old=>{
+
+    const clone=old.cloneNode(true);
+
+    clone.style.left=
+      (old.offsetLeft+30)+"px";
+
+    clone.style.top=
+      (old.offsetTop-20)+"px";
+
+    document.getElementById("stage").appendChild(clone);
+
+    makeDraggable(clone);
+
+  });
+
+  toast("Scene duplicated");
+
+}
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+
+function addKeyframe(){
+
+  const track=document.getElementById("characterTrack");
+
+  const key=document.createElement("div");
+
+  key.className="keyframe";
+
+  key.style.left=(currentTime*60)+"px";
+
+  track.appendChild(key);
+
+  keyframes.push({
+    time:currentTime
+  });
+
+  toast("Keyframe added");
+
+}
+
+function timelinePlay(){
+
+  if(isPlaying)return;
+
+  isPlaying=true;
+
+  const duration=
+    Number(document.getElementById("duration").value)||10;
+
+  playTimer=setInterval(()=>{
+
+    currentTime+=0.1;
+
+    if(currentTime>duration){
+
+      currentTime=0;
+
+    }
+
+    document.getElementById("playhead").style.left=
+      (currentTime*60)+"px";
+
+  },100);
+
+}
+
+function timelinePause(){
+
+  isPlaying=false;
+
+  clearInterval(playTimer);
+
+}
+
+function previewAnimation(){
+
+  timelinePause();
+
+  currentTime=0;
+
+  document.getElementById("playhead").style.left="0px";
+
+  timelinePlay();
+
+  toast("Preview playing");
+
+}
+
+/* =========================================================
+   SAVE / LOAD
+   ========================================================= */
+
+function getProjectData(){
+
+  return {
+
+    name:document.getElementById("sceneName").value,
+
+    title:document.getElementById("sceneTitle").value,
+
+    duration:document.getElementById("duration").value,
+
+    dialogue:{
+
+      character:document.getElementById("dialogueCharacter").value,
+
+      text:document.getElementById("dialogueInput").value,
+
+      visible:
+        document.getElementById("dialogueBox")
+        .classList.contains("show")
+
+    },
+
+    stage:document.getElementById("stage").innerHTML
+
+  };
+
+}
+
+function saveProject(){
+
+  const data=getProjectData();
+
+  localStorage.setItem(
+    "cartoonStudioProject",
+    JSON.stringify(data)
+  );
+
+  toast("Project saved on this phone");
+
+}
+
+function loadProject(){
+
+  const raw=
+    localStorage.getItem("cartoonStudioProject");
+
+  if(!raw){
+
+    toast("No saved project found");
+    return;
+
+  }
+
+  const data=JSON.parse(raw);
+
+  document.getElementById("sceneName").value=data.name;
+  document.getElementById("sceneTitle").value=data.title;
+  document.getElementById("duration").value=data.duration;
+
+  document.getElementById("stage").innerHTML=data.stage;
+
+  document.getElementById("dialogueCharacter").value=
+    data.dialogue.character;
+
+  document.getElementById("dialogueInput").value=
+    data.dialogue.text;
+
+  document.getElementById("dialogueName").textContent=
+    data.dialogue.character;
+
+  document.getElementById("dialogueText").textContent=
+    data.dialogue.text;
+
+  if(data.dialogue.visible){
+
+    document.getElementById("dialogueBox")
+      .classList.add("show");
+
+  }
+
+  document.querySelectorAll(".character").forEach(c=>{
+    makeDraggable(c);
+  });
+
+  toast("Project loaded");
+
+}
+
+function newProject(){
+
+  if(!confirm("Start a new project? Unsaved changes may be lost.")){
+    return;
+  }
+
+  document.getElementById("sceneName").value="Scene 1";
+  document.getElementById("sceneTitle").value="My Cartoon Episode";
+  document.getElementById("duration").value=10;
+
+  document.getElementById("stageText").textContent=
+    "My Cartoon Episode";
+
+  clearStage();
+
+  toast("New project created");
+
+}
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+function saveHistory(){
+
+  try{
+
+    const state=JSON.stringify(getProjectData());
+
+    history=history.slice(0,historyIndex+1);
+
+    history.push(state);
+
+    if(history.length>30){
+      history.shift();
+    }
+
+    historyIndex=history.length-1;
+
+  }catch(e){}
+
+}
+
+function undo(){
+
+  if(historyIndex<=0){
+
+    toast("Nothing to undo");
+    return;
+
+  }
+
+  historyIndex--;
+
+  restoreHistory(history[historyIndex]);
+
+  toast("Undo");
+
+}
+
+function redo(){
+
+  if(historyIndex>=history.length-1){
+
+    toast("Nothing to redo");
+    return;
+
+  }
+
+  historyIndex++;
+
+  restoreHistory(history[historyIndex]);
+
+  toast("Redo");
+
+}
+
+function restoreHistory(raw){
+
+  const data=JSON.parse(raw);
+
+  document.getElementById("sceneName").value=data.name;
+  document.getElementById("sceneTitle").value=data.title;
+  document.getElementById("duration").value=data.duration;
+
+  document.getElementById("stage").innerHTML=data.stage;
+
+  document.getElementById("dialogueCharacter").value=
+    data.dialogue.character;
+
+  document.getElementById("dialogueInput").value=
+    data.dialogue.text;
+
+  document.getElementById("dialogueName").textContent=
+    data.dialogue.character;
+
+  document.getElementById("dialogueText").textContent=
+    data.dialogue.text;
+
+  document.querySelectorAll(".character").forEach(c=>{
+    makeDraggable(c);
+  });
+
+}
+
+/* =========================================================
+   EXPORT
+   ========================================================= */
+
+function exportProject(){
+
+  document.getElementById("exportTitle").value=
+    document.getElementById("sceneTitle").value;
+
+  document.getElementById("exportModal").classList.add("open");
+
+}
+
+function closeExport(){
+
+  document.getElementById("exportModal")
+    .classList.remove("open");
+
+}
+
+function finishExport(){
+
+  const title=
+    document.getElementById("exportTitle").value;
+
+  const description=
+    document.getElementById("exportDescription").value;
+
+  const format=
+    document.getElementById("exportFormat").value;
+
+  const exportData={
+    title,
+    description,
+    format,
+    project:getProjectData()
+  };
+
+  const blob=new Blob(
+    [JSON.stringify(exportData,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+
+  a.href=url;
+
+  a.download=
+    title.replace(/[^a-z0-9]/gi,"_")+
+    "_cartoon_project.json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  closeExport();
+
+  toast("Project export downloaded");
+
+}
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+  updateDialogue();
+
+  saveHistory();
+
+  /* Allow clicking the stage to deselect */
+
+  document.getElementById("stage")
+    .addEventListener("click",function(e){
+
+      if(e.target===this ||
+         e.target.classList.contains("sky") ||
+         e.target.classList.contains("ground")){
+
+        document.querySelectorAll(".character")
+          .forEach(c=>c.classList.remove("selected"));
+
+        selectedCharacter=null;
+
+      }
+
+    });
+
+});
+
+/* Keyboard shortcuts */
+
+document.addEventListener("keydown",e=>{
+
+  if(e.ctrlKey && e.key==="s"){
+
+    e.preventDefault();
+    saveProject();
+
+  }
+
+  if(e.ctrlKey && e.key==="z"){
+
+    e.preventDefault();
+    undo();
+
+  }
+
+  if(e.ctrlKey && e.key==="y"){
+
+    e.preventDefault();
+    redo();
+
+  }
+
+});
+
+</script>
+
+</body>
+  </html>
