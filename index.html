@@ -2,2094 +2,335 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>Cartoon Studio</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>CartoonHub Studio V2</title>
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
-:root{
-  --bg:#10111a;
-  --panel:#191b28;
-  --panel2:#222536;
-  --text:#ffffff;
-  --muted:#aeb4c7;
-  --accent:#8b5cf6;
-  --accent2:#a78bfa;
-  --danger:#ef4444;
-  --green:#22c55e;
-  --border:#34384d;
-}
-
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
-  overflow-x:hidden;
-}
-
-button,input,textarea,select{
-  font:inherit;
-}
-
-button{
-  border:0;
-  cursor:pointer;
-}
-
-.app{
-  min-height:100vh;
-}
-
-/* HEADER */
-
-.header{
-  height:64px;
-  background:#151621;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 14px;
-  position:sticky;
-  top:0;
-  z-index:50;
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  font-weight:800;
-  font-size:18px;
-}
-
-.logo-icon{
-  width:36px;
-  height:36px;
-  border-radius:10px;
-  background:linear-gradient(135deg,#8b5cf6,#c084fc);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-}
-
-.header-actions{
-  display:flex;
-  gap:7px;
-}
-
-.icon-btn{
-  background:var(--panel2);
-  color:white;
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:9px 11px;
-}
-
-.icon-btn:hover{
-  background:#303449;
-}
-
-/* MAIN */
-
-.workspace{
-  display:flex;
-  min-height:calc(100vh - 64px);
-}
-
-/* LEFT */
-
-.sidebar{
-  width:230px;
-  background:var(--panel);
-  border-right:1px solid var(--border);
-  padding:12px;
-  flex-shrink:0;
-}
-
-.section-title{
-  color:var(--muted);
-  font-size:11px;
-  font-weight:bold;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  margin:12px 5px 7px;
-}
-
-.tool{
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:11px;
-  color:white;
-  background:transparent;
-  border-radius:9px;
-  text-align:left;
-  margin-bottom:4px;
-}
-
-.tool:hover,
-.tool.active{
-  background:#2b2e43;
-}
-
-.tool-icon{
-  width:28px;
-  text-align:center;
-}
-
-/* CENTER */
-
-.editor{
-  flex:1;
-  min-width:0;
-  display:flex;
-  flex-direction:column;
-  background:#0d0e15;
-}
-
-.topbar{
-  min-height:50px;
-  background:#151621;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:8px 12px;
-  gap:8px;
-}
-
-.scene-name{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.scene-name input{
-  background:#222536;
-  border:1px solid var(--border);
-  color:white;
-  border-radius:7px;
-  padding:7px 9px;
-  width:160px;
-  outline:none;
-}
-
-.top-controls{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-.btn{
-  background:#292d40;
-  color:white;
-  border:1px solid var(--border);
-  padding:8px 11px;
-  border-radius:8px;
-}
-
-.btn:hover{
-  background:#363b52;
-}
-
-.btn.primary{
-  background:var(--accent);
-  border-color:var(--accent);
-}
-
-.btn.primary:hover{
-  background:#7c3aed;
-}
-
-.btn.green{
-  background:#166534;
-  border-color:#16a34a;
-}
-
-.btn.red{
-  background:#7f1d1d;
-  border-color:#ef4444;
-}
-
-/* CANVAS */
-
-.canvas-area{
-  flex:1;
-  padding:16px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:430px;
-  overflow:auto;
-}
-
-.stage{
-  position:relative;
-  width:min(900px,94vw);
-  aspect-ratio:16/9;
-  background:#87ceeb;
-  border:2px solid #34384d;
-  border-radius:8px;
-  overflow:hidden;
-  box-shadow:0 15px 50px rgba(0,0,0,.35);
-  touch-action:none;
-}
-
-.sky{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(#72c9ff 0%,#bdeaff 68%,#dff7ff 100%);
-}
-
-.sun{
-  position:absolute;
-  width:70px;
-  height:70px;
-  background:#ffd54a;
-  border-radius:50%;
-  top:10%;
-  right:9%;
-  box-shadow:0 0 35px rgba(255,213,74,.65);
-}
-
-.ground{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  height:28%;
-  background:#63bd59;
-  border-top:4px solid #41913d;
-}
-
-.stage-text{
-  position:absolute;
-  top:7%;
-  left:5%;
-  color:#17324d;
-  font-size:clamp(13px,2vw,22px);
-  font-weight:bold;
-  text-shadow:0 1px 2px rgba(255,255,255,.5);
-}
-
-/* CHARACTERS */
-
-.character{
-  position:absolute;
-  width:90px;
-  height:145px;
-  cursor:grab;
-  user-select:none;
-  touch-action:none;
-  transform-origin:center bottom;
-}
-
-.character.selected{
-  outline:2px dashed white;
-  outline-offset:5px;
-}
-
-.head{
-  position:absolute;
-  width:65px;
-  height:65px;
-  left:12px;
-  top:0;
-  background:#f2b28e;
-  border-radius:50%;
-  border:3px solid #6b3c2c;
-}
-
-.hair{
-  position:absolute;
-  width:67px;
-  height:30px;
-  left:11px;
-  top:-2px;
-  background:#302016;
-  border-radius:40px 40px 10px 10px;
-  z-index:2;
-}
-
-.eye{
-  position:absolute;
-  width:7px;
-  height:9px;
-  background:#111;
-  border-radius:50%;
-  top:27px;
-  z-index:3;
-}
-
-.eye.left{
-  left:28px;
-}
-
-.eye.right{
-  left:49px;
-}
-
-.mouth{
-  position:absolute;
-  width:20px;
-  height:9px;
-  border-bottom:3px solid #7b2d26;
-  border-radius:50%;
-  left:34px;
-  top:44px;
-  z-index:3;
-}
-
-.body{
-  position:absolute;
-  width:55px;
-  height:65px;
-  left:18px;
-  top:61px;
-  background:#7656d8;
-  border-radius:17px 17px 8px 8px;
-}
-
-.arm{
-  position:absolute;
-  width:14px;
-  height:52px;
-  background:#f2b28e;
-  border:2px solid #6b3c2c;
-  border-radius:12px;
-  top:68px;
-  z-index:-1;
-}
-
-.arm.left{
-  left:8px;
-  transform:rotate(15deg);
-}
-
-.arm.right{
-  right:8px;
-  transform:rotate(-15deg);
-}
-
-.leg{
-  position:absolute;
-  width:17px;
-  height:48px;
-  background:#27304b;
-  border-radius:9px;
-  top:119px;
-  z-index:-1;
-}
-
-.leg.left{
-  left:28px;
-}
-
-.leg.right{
-  left:53px;
-}
-
-.character-name{
-  position:absolute;
-  top:-25px;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(0,0,0,.65);
-  color:#fff;
-  padding:3px 7px;
-  border-radius:5px;
-  font-size:11px;
-  white-space:nowrap;
-}
-
-/* PROPS */
-
-.cloud{
-  position:absolute;
-  width:120px;
-  height:35px;
-  background:white;
-  border-radius:30px;
-  opacity:.85;
-}
-
-.cloud:before,
-.cloud:after{
-  content:"";
-  position:absolute;
-  background:white;
-  border-radius:50%;
-}
-
-.cloud:before{
-  width:50px;
-  height:50px;
-  left:20px;
-  bottom:0;
-}
-
-.cloud:after{
-  width:60px;
-  height:60px;
-  right:15px;
-  bottom:0;
-}
-
-/* DIALOGUE */
-
-.dialogue-box{
-  position:absolute;
-  left:5%;
-  right:5%;
-  bottom:5%;
-  min-height:58px;
-  background:rgba(0,0,0,.78);
-  border:2px solid rgba(255,255,255,.8);
-  border-radius:14px;
-  padding:12px 15px;
-  color:white;
-  font-size:clamp(12px,2vw,19px);
-  display:none;
-}
-
-.dialogue-box.show{
-  display:block;
-}
-
-.dialogue-name{
-  color:#c4b5fd;
-  font-weight:bold;
-  font-size:12px;
-  margin-bottom:3px;
-}
-
-/* RIGHT PANEL */
-
-.properties{
-  width:270px;
-  background:var(--panel);
-  border-left:1px solid var(--border);
-  padding:12px;
-  overflow-y:auto;
-  flex-shrink:0;
-}
-
-.property-group{
-  background:#202333;
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:11px;
-  margin-bottom:10px;
-}
-
-.property-group h3{
-  margin:0 0 10px;
-  font-size:13px;
-}
-
-.field{
-  margin-bottom:9px;
-}
-
-.field label{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  margin-bottom:4px;
-}
-
-.field input,
-.field textarea,
-.field select{
-  width:100%;
-  background:#11131d;
-  color:white;
-  border:1px solid var(--border);
-  border-radius:7px;
-  padding:8px;
-  outline:none;
-}
-
-.field textarea{
-  resize:vertical;
-  min-height:65px;
-}
-
-.row{
-  display:flex;
-  gap:7px;
-}
-
-.row .field{
-  flex:1;
-}
-
-.color-input{
-  height:38px;
-  padding:3px!important;
-}
-
-/* TIMELINE */
-
-.timeline{
-  height:190px;
-  background:#151621;
-  border-top:1px solid var(--border);
-  flex-shrink:0;
-  display:flex;
-  flex-direction:column;
-}
-
-.timeline-header{
-  height:42px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 12px;
-  border-bottom:1px solid var(--border);
-}
-
-.timeline-controls{
-  display:flex;
-  gap:6px;
-}
-
-.timeline-body{
-  display:flex;
-  overflow-x:auto;
-  flex:1;
-}
-
-.track-labels{
-  width:100px;
-  flex-shrink:0;
-  background:#191b28;
-  border-right:1px solid var(--border);
-}
-
-.track-label{
-  height:48px;
-  border-bottom:1px solid var(--border);
-  padding:15px 8px;
-  font-size:11px;
-  color:var(--muted);
-}
-
-.frames{
-  min-width:900px;
-  position:relative;
-}
-
-.ruler{
-  height:36px;
-  display:flex;
-  border-bottom:1px solid var(--border);
-}
-
-.tick{
-  width:60px;
-  flex-shrink:0;
-  border-right:1px solid #303449;
-  color:#8f95aa;
-  font-size:10px;
-  padding:7px 4px;
-}
-
-.track{
-  height:48px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  position:relative;
-}
-
-.keyframe{
-  width:15px;
-  height:15px;
-  background:#a78bfa;
-  transform:rotate(45deg);
-  position:absolute;
-  border-radius:2px;
-  cursor:pointer;
-}
-
-.playhead{
-  position:absolute;
-  top:0;
-  bottom:0;
-  width:2px;
-  background:#ef4444;
-  left:0;
-  z-index:10;
-  pointer-events:none;
-}
-
-/* MODAL */
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.72);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
-  padding:15px;
-}
-
-.modal.open{
-  display:flex;
-}
-
-.modal-card{
-  width:min(500px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:#1a1c29;
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:18px;
-  box-shadow:0 20px 70px rgba(0,0,0,.6);
-}
-
-.modal-card h2{
-  margin-top:0;
-}
-
-.modal-actions{
-  display:flex;
-  gap:8px;
-  justify-content:flex-end;
-  margin-top:15px;
-}
-
-/* MOBILE */
-
-.mobile-tools{
-  display:none;
-}
-
-@media(max-width:900px){
-
-  .sidebar{
-    width:70px;
-    padding:7px;
-  }
-
-  .tool{
-    justify-content:center;
-    padding:11px 4px;
-  }
-
-  .tool span:last-child{
-    display:none;
-  }
-
-  .section-title{
-    display:none;
-  }
-
-  .properties{
-    width:220px;
-  }
-
-  .stage{
-    width:96vw;
-  }
-}
-
-@media(max-width:650px){
-
-  .header{
-    height:58px;
-  }
-
-  .logo span{
-    display:none;
-  }
-
-  .workspace{
-    display:block;
-  }
-
-  .sidebar{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    width:100%;
-    height:62px;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    background:#181a27;
-    border-right:0;
-    border-top:1px solid var(--border);
-    z-index:60;
-    padding:4px;
-  }
-
-  .tool{
-    width:auto;
-    margin:0;
-    padding:7px 10px;
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-    font-size:9px;
-  }
-
-  .tool span:last-child{
-    display:block;
-  }
-
-  .editor{
-    padding-bottom:62px;
-  }
-
-  .properties{
-    width:100%;
-    border-left:0;
-    border-top:1px solid var(--border);
-    max-height:none;
-  }
-
-  .canvas-area{
-    padding:7px;
-    min-height:250px;
-  }
-
-  .stage{
-    width:98vw;
-    border-radius:5px;
-  }
-
-  .topbar{
-    flex-wrap:wrap;
-  }
-
-  .scene-name input{
-    width:130px;
-  }
-
-  .timeline{
-    height:155px;
-  }
-
-  .frames{
-    min-width:720px;
-  }
-
-  .header-actions .icon-btn:nth-child(1),
-  .header-actions .icon-btn:nth-child(2){
-    display:none;
-  }
-}
-
-/* TOAST */
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:80px;
-  transform:translateX(-50%) translateY(20px);
-  background:#272b3d;
-  color:white;
-  border:1px solid var(--border);
-  padding:10px 15px;
-  border-radius:9px;
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-  z-index:200;
-  font-size:13px;
-}
-
-.toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0b0c13;--panel:#171925;--panel2:#202334;--line:#34384c;--text:#fff;--muted:#aeb5ca;--purple:#8b5cf6;--purple2:#a78bfa;--green:#22c55e;--red:#ef4444}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;overflow-x:hidden}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh}.header{height:60px;background:#12131d;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 12px;position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800}.logoIcon{width:35px;height:35px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#c084fc);display:grid;place-items:center;font-size:19px}
+.headBtns{display:flex;gap:6px}.btn{background:var(--panel2);color:white;border:1px solid var(--line);border-radius:8px;padding:8px 10px}.btn.primary{background:var(--purple);border-color:var(--purple)}.btn.green{background:#14532d;border-color:#22c55e}.btn.red{background:#651b1b;border-color:#ef4444}.btn:active{transform:scale(.98)}
+.layout{display:grid;grid-template-columns:215px 1fr 270px;min-height:calc(100vh - 60px)}
+.left,.right{background:var(--panel);padding:10px;overflow:auto}.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}
+.section{font-size:10px;color:var(--muted);font-weight:bold;text-transform:uppercase;letter-spacing:1px;margin:10px 4px 6px}
+.tool{width:100%;background:transparent;color:white;border:0;border-radius:8px;padding:10px;text-align:left;display:flex;gap:10px;align-items:center;margin:3px 0}.tool:hover,.tool.active{background:#2b2f43}.ico{width:25px;text-align:center}
+.center{min-width:0;background:#090a10;display:flex;flex-direction:column}.top{min-height:52px;border-bottom:1px solid var(--line);background:#13141f;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px}.top input{width:145px;background:#202334;border:1px solid var(--line);color:white;border-radius:7px;padding:8px}
+.topActions{display:flex;gap:5px;flex-wrap:wrap}
+.canvasWrap{flex:1;min-height:390px;display:flex;align-items:center;justify-content:center;padding:12px;overflow:auto}
+.stage{position:relative;width:min(900px,96vw);aspect-ratio:16/9;overflow:hidden;border:2px solid #3a3e52;border-radius:8px;box-shadow:0 20px 60px #0008;background:#7ecdf4;touch-action:none}
+.sky{position:absolute;inset:0;background:linear-gradient(#62c5fa,#d9f5ff)}.ground{position:absolute;left:0;right:0;bottom:0;height:25%;background:#55ad4d;border-top:4px solid #39883b}
+.sun{position:absolute;width:65px;height:65px;border-radius:50%;right:9%;top:9%;background:#ffd84d;box-shadow:0 0 35px #ffd84d99}
+.stageTitle{position:absolute;left:4%;top:5%;font-weight:bold;color:#24405a;text-shadow:0 1px 2px #fff8;font-size:clamp(12px,2vw,21px)}
+.star{position:absolute;color:white;font-size:20px;opacity:.85}
+.cloud{position:absolute;width:105px;height:30px;background:white;border-radius:30px;opacity:.82}.cloud:before,.cloud:after{content:"";position:absolute;background:white;border-radius:50%}.cloud:before{width:45px;height:45px;left:18px;bottom:0}.cloud:after{width:52px;height:52px;right:12px;bottom:0}
+.char{position:absolute;width:90px;height:145px;cursor:grab;user-select:none;touch-action:none;transform-origin:center bottom}.char.selected{outline:2px dashed white;outline-offset:5px}.head{position:absolute;width:65px;height:65px;left:12px;top:0;background:#f2b28e;border:3px solid #6b3c2c;border-radius:50%}.hair{position:absolute;width:67px;height:30px;left:11px;top:-2px;background:#302016;border-radius:40px 40px 10px 10px;z-index:2}.eye{position:absolute;width:7px;height:9px;background:#111;border-radius:50%;top:27px;z-index:3}.eye.l{left:28px}.eye.r{left:49px}.mouth{position:absolute;width:20px;height:9px;border-bottom:3px solid #7b2d26;border-radius:50%;left:34px;top:44px;z-index:3}.body{position:absolute;width:55px;height:65px;left:18px;top:61px;background:#7656d8;border-radius:17px 17px 8px 8px}.arm{position:absolute;width:14px;height:52px;background:#f2b28e;border:2px solid #6b3c2c;border-radius:12px;top:68px;z-index:-1}.arm.l{left:8px;transform:rotate(15deg)}.arm.r{right:8px;transform:rotate(-15deg)}.leg{position:absolute;width:17px;height:48px;background:#27304b;border-radius:9px;top:119px;z-index:-1}.leg.l{left:28px}.leg.r{left:53px}.charLabel{position:absolute;top:-25px;left:50%;transform:translateX(-50%);background:#000b;color:white;padding:3px 7px;border-radius:5px;font-size:10px;white-space:nowrap}
+.dialogue{display:none;position:absolute;left:5%;right:5%;bottom:5%;background:#000c;border:2px solid #fff;border-radius:14px;padding:10px 14px;font-size:clamp(11px,2vw,18px)}.dialogue.show{display:block}.dname{color:#c4b5fd;font-weight:bold;font-size:11px;margin-bottom:3px}
+.timeline{height:190px;border-top:1px solid var(--line);background:#13141e;display:flex;flex-direction:column;flex-shrink:0}.tlHead{height:42px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 10px}.tlBtns{display:flex;gap:5px}.tlBody{display:flex;overflow:auto;flex:1}.labels{width:88px;flex-shrink:0;background:#181a27;border-right:1px solid var(--line)}.label{height:45px;border-bottom:1px solid var(--line);font-size:10px;color:var(--muted);padding:14px 6px}.frames{min-width:1000px;position:relative}.ruler{height:35px;display:flex;border-bottom:1px solid var(--line)}.tick{width:60px;flex-shrink:0;border-right:1px solid #303449;font-size:9px;color:#858ca2;padding:7px}.track{height:45px;border-bottom:1px solid var(--line);position:relative}.key{position:absolute;width:14px;height:14px;background:#a78bfa;transform:rotate(45deg);border-radius:2px;top:15px;cursor:pointer}.playhead{position:absolute;top:0;bottom:0;width:2px;background:#ef4444;z-index:10;pointer-events:none}
+.group{background:#202334;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:9px}.group h3{font-size:13px;margin:0 0 9px}.field{margin-bottom:8px}.field label{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}.field input,.field textarea,.field select{width:100%;background:#10121b;color:white;border:1px solid var(--line);border-radius:7px;padding:8px;outline:none}.field textarea{min-height:65px;resize:vertical}.row{display:flex;gap:6px}.row>*{flex:1}.color{height:35px!important;padding:2px!important}.mini{font-size:10px;color:var(--muted);line-height:1.4}
+.sceneList{display:flex;gap:6px;overflow-x:auto;padding:7px;background:#12131d;border-bottom:1px solid var(--line)}.sceneCard{min-width:100px;background:#202334;border:1px solid var(--line);border-radius:7px;padding:7px;font-size:10px;cursor:pointer}.sceneCard.active{border-color:var(--purple);background:#2b2343}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:100;align-items:center;justify-content:center;padding:15px}.modal.open{display:flex}.modalCard{width:min(500px,100%);max-height:90vh;overflow:auto;background:#191b28;border:1px solid var(--line);border-radius:14px;padding:16px}.modalCard h2{margin-top:0}.modalGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.modalGrid button{min-height:65px}.modalActions{display:flex;justify-content:flex-end;gap:7px;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:75px;transform:translate(-50%,20px);background:#292d40;border:1px solid var(--line);padding:9px 13px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s;z-index:200;font-size:12px}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){.layout{grid-template-columns:68px 1fr}.right{display:none}.tool{justify-content:center;padding:10px 4px}.tool span:last-child{display:none}.section{display:none}}
+@media(max-width:650px){.header{height:56px}.logo span{display:none}.layout{display:block}.left{position:fixed;left:0;right:0;bottom:0;width:100%;height:62px;z-index:60;display:flex;justify-content:space-around;align-items:center;padding:3px;border:0;border-top:1px solid var(--line)}.tool{display:flex;flex-direction:column;gap:1px;font-size:8px;padding:5px}.tool span:last-child{display:block}.center{padding-bottom:62px}.canvasWrap{min-height:245px;padding:5px}.stage{width:99vw}.timeline{height:160px}.top{flex-wrap:wrap}.top input{width:125px}.headBtns .btn:nth-child(1){display:none}.modalGrid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
-
 <body>
-
 <div class="app">
-
 <header class="header">
-
-  <div class="logo">
-    <div class="logo-icon">🎬</div>
-    <span>Cartoon Studio</span>
+  <div class="logo"><div class="logoIcon">🎬</div><span>CartoonHub Studio <small style="color:#a78bfa">V2</small></span></div>
+  <div class="headBtns">
+    <button class="btn" onclick="newProject()">＋ New</button>
+    <button class="btn" onclick="saveProject()">💾 Save</button>
+    <button class="btn" onclick="loadProject()">📂 Load</button>
   </div>
-
-  <div class="header-actions">
-    <button class="icon-btn" onclick="newProject()">＋ New</button>
-    <button class="icon-btn" onclick="saveProject()">💾 Save</button>
-    <button class="icon-btn" onclick="loadProject()">📂 Load</button>
-  </div>
-
 </header>
 
-<div class="workspace">
-
-<!-- LEFT TOOLBAR -->
-
-<aside class="sidebar">
-
-  <div class="section-title">Create</div>
-
-  <button class="tool active" onclick="selectTool(this,'select')">
-    <span class="tool-icon">🖱️</span>
-    <span>Select</span>
-  </button>
-
-  <button class="tool" onclick="addCharacter()">
-    <span class="tool-icon">🧍</span>
-    <span>Character</span>
-  </button>
-
-  <button class="tool" onclick="addCloud()">
-    <span class="tool-icon">☁️</span>
-    <span>Prop</span>
-  </button>
-
-  <button class="tool" onclick="openBackgrounds()">
-    <span class="tool-icon">🌄</span>
-    <span>Background</span>
-  </button>
-
-  <button class="tool" onclick="addDialogue()">
-    <span class="tool-icon">💬</span>
-    <span>Dialogue</span>
-  </button>
-
-  <div class="section-title">Scene</div>
-
-  <button class="tool" onclick="duplicateScene()">
-    <span class="tool-icon">📋</span>
-    <span>Duplicate</span>
-  </button>
-
-  <button class="tool" onclick="clearStage()">
-    <span class="tool-icon">🗑️</span>
-    <span>Clear</span>
-  </button>
-
-  <button class="tool" onclick="previewAnimation()">
-    <span class="tool-icon">▶️</span>
-    <span>Preview</span>
-  </button>
-
+<div class="layout">
+<aside class="left">
+  <div class="section">Create</div>
+  <button class="tool active" onclick="activate(this)"><span class="ico">🖱️</span><span>Select</span></button>
+  <button class="tool" onclick="addCharacter()"><span class="ico">🧍</span><span>Character</span></button>
+  <button class="tool" onclick="addProp()"><span class="ico">☁️</span><span>Prop</span></button>
+  <button class="tool" onclick="openBackgrounds()"><span class="ico">🌄</span><span>Background</span></button>
+  <button class="tool" onclick="showDialogue()"><span class="ico">💬</span><span>Dialogue</span></button>
+  <button class="tool" onclick="recordVoice()"><span class="ico">🎙️</span><span>Voice</span></button>
+  <div class="section">Animation</div>
+  <button class="tool" onclick="addKeyframe()"><span class="ico">◆</span><span>Keyframe</span></button>
+  <button class="tool" onclick="preview()"><span class="ico">▶️</span><span>Preview</span></button>
+  <button class="tool" onclick="addScene()"><span class="ico">🎞️</span><span>New Scene</span></button>
+  <button class="tool" onclick="exportProject()"><span class="ico">📤</span><span>Export</span></button>
 </aside>
 
-<!-- EDITOR -->
-
-<main class="editor">
-
-  <div class="topbar">
-
-    <div class="scene-name">
-      <span>🎞️</span>
-      <input id="sceneName" value="Scene 1">
-    </div>
-
-    <div class="top-controls">
+<main class="center">
+  <div class="top">
+    <div style="display:flex;align-items:center;gap:7px">🎞️ <input id="projectName" value="My Cartoon Episode"></div>
+    <div class="topActions">
       <button class="btn" onclick="undo()">↶</button>
       <button class="btn" onclick="redo()">↷</button>
-      <button class="btn" onclick="addScene()">＋ Scene</button>
+      <button class="btn" onclick="changeRatio()">📐 <span id="ratioLabel">16:9</span></button>
       <button class="btn primary" onclick="exportProject()">📤 Export</button>
     </div>
-
   </div>
 
-  <div class="canvas-area">
+  <div class="sceneList" id="sceneList"></div>
 
+  <div class="canvasWrap">
     <div class="stage" id="stage">
-
       <div class="sky" id="sky"></div>
-
       <div class="sun" id="sun"></div>
-
-      <div class="cloud" style="left:12%;top:14%;"></div>
-      <div class="cloud" style="left:42%;top:9%;transform:scale(.7);"></div>
-
-      <div class="ground"></div>
-
-      <div class="stage-text" id="stageText">
-        My Cartoon Episode
-      </div>
-
-      <div class="dialogue-box" id="dialogueBox">
-        <div class="dialogue-name" id="dialogueName">Character</div>
-        <div id="dialogueText">Hello! Welcome to my cartoon!</div>
-      </div>
-
+      <div class="cloud" style="left:11%;top:15%"></div>
+      <div class="cloud" style="left:43%;top:10%;transform:scale(.7)"></div>
+      <div class="star" style="right:25%;top:20%">✦</div>
+      <div class="ground" id="ground"></div>
+      <div class="stageTitle" id="stageTitle">My Cartoon Episode</div>
+      <div class="dialogue" id="dialogue"><div class="dname" id="dname">Character</div><div id="dtext">Hello!</div></div>
     </div>
-
   </div>
-
-  <!-- PROPERTIES -->
-
-  <section class="properties">
-
-    <div class="property-group">
-
-      <h3>🎬 Scene Settings</h3>
-
-      <div class="field">
-        <label>Scene title</label>
-        <input id="sceneTitle" value="My Cartoon Episode"
-          oninput="updateSceneTitle(this.value)">
-      </div>
-
-      <div class="field">
-        <label>Duration (seconds)</label>
-        <input id="duration" type="number" min="1" max="120" value="10"
-          onchange="updateDuration(this.value)">
-      </div>
-
-    </div>
-
-    <div class="property-group">
-
-      <h3>🧍 Selected Character</h3>
-
-      <div class="field">
-        <label>Name</label>
-        <input id="charName" value="Character"
-          oninput="updateCharacterName(this.value)">
-      </div>
-
-      <div class="row">
-
-        <div class="field">
-          <label>X</label>
-          <input id="charX" type="number" onchange="updateCharacterPosition()">
-        </div>
-
-        <div class="field">
-          <label>Y</label>
-          <input id="charY" type="number" onchange="updateCharacterPosition()">
-        </div>
-
-      </div>
-
-      <div class="row">
-
-        <div class="field">
-          <label>Scale</label>
-          <input id="charScale" type="number" step=".1" min=".3" max="3"
-            value="1" onchange="updateCharacterScale()">
-        </div>
-
-        <div class="field">
-          <label>Rotation</label>
-          <input id="charRotation" type="number"
-            value="0" onchange="updateCharacterRotation()">
-        </div>
-
-      </div>
-
-      <div class="field">
-        <label>Body color</label>
-        <input id="bodyColor" class="color-input" type="color"
-          value="#7656d8" onchange="updateBodyColor()">
-      </div>
-
-      <button class="btn red" style="width:100%"
-        onclick="deleteSelected()">Delete Character</button>
-
-    </div>
-
-    <div class="property-group">
-
-      <h3>💬 Dialogue</h3>
-
-      <div class="field">
-        <label>Character</label>
-        <input id="dialogueCharacter" value="Character"
-          oninput="updateDialogue()">
-      </div>
-
-      <div class="field">
-        <label>Text</label>
-        <textarea id="dialogueInput"
-          oninput="updateDialogue()">Hello! Welcome to my cartoon!</textarea>
-      </div>
-
-      <button class="btn primary" style="width:100%"
-        onclick="toggleDialogue()">Show / Hide Dialogue</button>
-
-    </div>
-
-  </section>
-
-  <!-- TIMELINE -->
 
   <section class="timeline">
-
-    <div class="timeline-header">
-
-      <strong>🎞️ Timeline</strong>
-
-      <div class="timeline-controls">
+    <div class="tlHead">
+      <strong>🎞️ Animation Timeline</strong>
+      <div class="tlBtns">
         <button class="btn" onclick="timelinePlay()">▶</button>
         <button class="btn" onclick="timelinePause()">⏸</button>
         <button class="btn" onclick="addKeyframe()">◆ Keyframe</button>
       </div>
-
     </div>
-
-    <div class="timeline-body">
-
-      <div class="track-labels">
-
-        <div class="track-label">Time</div>
-        <div class="track-label">Characters</div>
-        <div class="track-label">Dialogue</div>
-
-      </div>
-
+    <div class="tlBody">
+      <div class="labels"><div class="label">Time</div><div class="label">Characters</div><div class="label">Dialogue</div></div>
       <div class="frames">
-
-        <div class="ruler">
-
-          <div class="tick">0s</div>
-          <div class="tick">1s</div>
-          <div class="tick">2s</div>
-          <div class="tick">3s</div>
-          <div class="tick">4s</div>
-          <div class="tick">5s</div>
-          <div class="tick">6s</div>
-          <div class="tick">7s</div>
-          <div class="tick">8s</div>
-          <div class="tick">9s</div>
-          <div class="tick">10s</div>
-
-        </div>
-
-        <div class="track" id="characterTrack"></div>
-
+        <div class="ruler" id="ruler"></div>
+        <div class="track" id="charTrack"></div>
         <div class="track" id="dialogueTrack"></div>
-
         <div class="playhead" id="playhead"></div>
-
       </div>
-
     </div>
-
   </section>
-
 </main>
 
-</div>
+<aside class="right">
+  <div class="group">
+    <h3>🎬 Scene</h3>
+    <div class="field"><label>Scene title</label><input id="sceneTitle" value="Scene 1" oninput="sceneTitleChanged()"></div>
+    <div class="row">
+      <div class="field"><label>Duration (sec)</label><input id="duration" type="number" min="1" max="120" value="10" onchange="renderRuler()"></div>
+      <div class="field"><label>FPS</label><select id="fps"><option>24</option><option selected>30</option><option>60</option></select></div>
+    </div>
+  </div>
 
-</div>
+  <div class="group">
+    <h3>🧍 Character</h3>
+    <div class="field"><label>Name</label><input id="charName" value="Character" oninput="updateCharName()"></div>
+    <div class="row">
+      <div class="field"><label>X</label><input id="charX" type="number" onchange="updateCharPos()"></div>
+      <div class="field"><label>Y</label><input id="charY" type="number" onchange="updateCharPos()"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Scale</label><input id="charScale" type="number" step=".1" min=".3" max="3" value="1" onchange="updateCharTransform()"></div>
+      <div class="field"><label>Rotation</label><input id="charRotation" type="number" value="0" onchange="updateCharTransform()"></div>
+    </div>
+    <div class="field"><label>Body colour</label><input class="color" id="bodyColor" type="color" value="#7656d8" onchange="updateBody()"></div>
+    <button class="btn red" style="width:100%" onclick="deleteCharacter()">Delete</button>
+  </div>
 
-<!-- BACKGROUND MODAL -->
+  <div class="group">
+    <h3>💬 Dialogue & Voice</h3>
+    <div class="field"><label>Speaker</label><input id="speaker" value="Character" oninput="updateDialogue()"></div>
+    <div class="field"><label>Dialogue</label><textarea id="dialogueInput" oninput="updateDialogue()">Hello! Welcome to my cartoon!</textarea></div>
+    <div class="row"><button class="btn primary" onclick="showDialogue()">Show</button><button class="btn" onclick="hideDialogue()">Hide</button></div>
+    <div style="margin-top:8px"><button class="btn green" style="width:100%" onclick="recordVoice()">🎙️ Record Voice</button></div>
+    <div id="recordStatus" class="mini" style="margin-top:6px">No voice recording yet.</div>
+    <audio id="voicePlayer" controls style="width:100%;display:none;margin-top:7px"></audio>
+  </div>
+
+  <div class="group">
+    <h3>📺 YouTube Format</h3>
+    <div class="field"><label>Canvas</label><select id="formatSelect" onchange="setRatio(this.value)">
+      <option value="16:9">YouTube 16:9</option>
+      <option value="9:16">YouTube Shorts 9:16</option>
+      <option value="1:1">Square 1:1</option>
+    </select></div>
+    <div class="mini">Use 16:9 for normal YouTube videos and 9:16 for Shorts.</div>
+  </div>
+</aside>
+</div>
+</div>
 
 <div class="modal" id="backgroundModal">
-
-  <div class="modal-card">
-
-    <h2>🌄 Choose Background</h2>
-
-    <div class="row">
-
-      <button class="btn" onclick="setBackground('day')">
-        ☀️ Day
-      </button>
-
-      <button class="btn" onclick="setBackground('sunset')">
-        🌅 Sunset
-      </button>
-
-      <button class="btn" onclick="setBackground('night')">
-        🌙 Night
-      </button>
-
-    </div>
-
-    <div class="row" style="margin-top:10px">
-
-      <button class="btn" onclick="setBackground('forest')">
-        🌲 Forest
-      </button>
-
-      <button class="btn" onclick="setBackground('city')">
-        🏙️ City
-      </button>
-
-      <button class="btn" onclick="setBackground('space')">
-        🚀 Space
-      </button>
-
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn" onclick="closeBackgrounds()">Close</button>
-    </div>
-
-  </div>
-
+<div class="modalCard">
+<h2>🌄 Backgrounds</h2>
+<div class="modalGrid">
+<button class="btn" onclick="background('day')">☀️ Day</button>
+<button class="btn" onclick="background('sunset')">🌅 Sunset</button>
+<button class="btn" onclick="background('night')">🌙 Night</button>
+<button class="btn" onclick="background('forest')">🌲 Forest</button>
+<button class="btn" onclick="background('city')">🏙️ City</button>
+<button class="btn" onclick="background('space')">🚀 Space</button>
+</div>
+<div class="modalActions"><button class="btn" onclick="closeBackgrounds()">Close</button></div>
+</div>
 </div>
 
-<!-- EXPORT MODAL -->
-
 <div class="modal" id="exportModal">
-
-  <div class="modal-card">
-
-    <h2>📤 Export Cartoon</h2>
-
-    <p style="color:#aeb4c7">
-      Version 1 saves your cartoon project and prepares it for
-      future video export.
-    </p>
-
-    <div class="field">
-      <label>Episode title</label>
-      <input id="exportTitle" value="My Cartoon Episode">
-    </div>
-
-    <div class="field">
-      <label>Description</label>
-      <textarea id="exportDescription"
-        placeholder="Write your YouTube description..."></textarea>
-    </div>
-
-    <div class="field">
-      <label>Format</label>
-      <select id="exportFormat">
-        <option>16:9 YouTube</option>
-        <option>9:16 YouTube Shorts</option>
-        <option>1:1 Square</option>
-      </select>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn" onclick="closeExport()">Cancel</button>
-      <button class="btn primary" onclick="finishExport()">Prepare Export</button>
-    </div>
-
-  </div>
-
+<div class="modalCard">
+<h2>📤 Export Cartoon</h2>
+<p class="mini">Version 2 exports your project package and includes your scenes, animation data, dialogue and recording metadata. MP4 rendering is the next engine upgrade.</p>
+<div class="field"><label>Episode title</label><input id="exportTitle" value="My Cartoon Episode"></div>
+<div class="field"><label>YouTube description</label><textarea id="exportDesc" placeholder="Write your episode description..."></textarea></div>
+<div class="modalActions"><button class="btn" onclick="closeExport()">Cancel</button><button class="btn primary" onclick="downloadProject()">Download Project</button></div>
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+let scenes=[];
+let currentScene=0;
+let selected=null;
+let charCount=0;
+let currentTime=0;
+let playing=false;
+let timer=null;
+let ratio="16:9";
+let history=[];
+let historyPos=-1;
+let mediaRecorder=null;
+let audioChunks=[];
+let voiceBlob=null;
 
-/* =========================================================
-   CARTOON STUDIO
-   Version 1
-   ========================================================= */
+const $=id=>document.getElementById(id);
 
-let selectedCharacter = null;
-let characterCounter = 0;
-let keyframes = [];
-let isPlaying = false;
-let playTimer = null;
-let currentTime = 0;
-let history = [];
-let historyIndex = -1;
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200)}
+function activate(b){document.querySelectorAll(".tool").forEach(x=>x.classList.remove("active"));b.classList.add("active")}
 
-/* =========================================================
-   BASIC UI
-   ========================================================= */
-
-function toast(message){
-
-  const el = document.getElementById("toast");
-
-  el.textContent = message;
-  el.classList.add("show");
-
-  setTimeout(()=>{
-    el.classList.remove("show");
-  },2200);
+function blankScene(name="Scene 1"){
+ return {name,duration:10,ratio:"16:9",background:"day",dialogue:{speaker:"Character",text:"Hello! Welcome to my cartoon!",visible:false},characters:[],keyframes:[]};
 }
 
-function selectTool(button,tool){
-
-  document.querySelectorAll(".tool").forEach(x=>{
-    x.classList.remove("active");
-  });
-
-  button.classList.add("active");
-
+function init(){
+ scenes=[blankScene()];
+ renderSceneList();
+ renderScene();
+ renderRuler();
+ saveState();
 }
-
-/* =========================================================
-   CHARACTERS
-   ========================================================= */
-
+function sceneTitleChanged(){scenes[currentScene].name=$("sceneTitle").value;renderSceneList();$("stageTitle").textContent=$("projectName").value;saveState()}
+function renderSceneList(){
+ const list=$("sceneList");list.innerHTML="";
+ scenes.forEach((s,i)=>{
+  const d=document.createElement("div");d.className="sceneCard"+(i===currentScene?" active":"");
+  d.textContent=(i+1)+". "+s.name;d.onclick=()=>{currentScene=i;renderScene();renderSceneList()};list.appendChild(d);
+ });
+}
+function renderScene(){
+ const s=scenes[currentScene];
+ $("sceneTitle").value=s.name;$("duration").value=s.duration;
+ setRatio(s.ratio,false);
+ background(s.background,false);
+ $("dialogueInput").value=s.dialogue.text;$("speaker").value=s.dialogue.speaker;
+ $("dname").textContent=s.dialogue.speaker;$("dtext").textContent=s.dialogue.text;
+ $("dialogue").classList.toggle("show",s.dialogue.visible);
+ document.querySelectorAll(".char").forEach(e=>e.remove());
+ selected=null;
+ s.characters.forEach(c=>createCharacterElement(c));
+ renderKeyframes();
+ renderRuler();
+}
 function addCharacter(){
-
-  characterCounter++;
-
-  const char=document.createElement("div");
-
-  char.className="character";
-
-  char.dataset.id="character-"+characterCounter;
-
-  char.style.left=(15 + characterCounter*8)+"%";
-  char.style.bottom="23%";
-
-  char.innerHTML=`
-
-    <div class="character-name">
-      Character ${characterCounter}
-    </div>
-
-    <div class="hair"></div>
-
-    <div class="head">
-
-      <div class="eye left"></div>
-      <div class="eye right"></div>
-
-      <div class="mouth"></div>
-
-    </div>
-
-    <div class="body"></div>
-
-    <div class="arm left"></div>
-    <div class="arm right"></div>
-
-    <div class="leg left"></div>
-    <div class="leg right"></div>
-
-  `;
-
-  document.getElementById("stage").appendChild(char);
-
-  makeDraggable(char);
-
-  selectCharacter(char);
-
-  saveHistory();
-
-  toast("Character added");
-
+ charCount++;
+ const data={id:"c"+Date.now()+charCount,name:"Character "+charCount,x:80+charCount*55,y:120,scale:1,rotation:0,color:"#7656d8"};
+ scenes[currentScene].characters.push(data);
+ createCharacterElement(data);
+ saveState();toast("Character added");
 }
-
-function selectCharacter(char){
-
-  document.querySelectorAll(".character").forEach(c=>{
-    c.classList.remove("selected");
-  });
-
-  char.classList.add("selected");
-
-  selectedCharacter=char;
-
-  updateCharacterPanel();
-
+function createCharacterElement(data){
+ const c=document.createElement("div");c.className="char";c.dataset.id=data.id;
+ c.style.left=data.x+"px";c.style.top=data.y+"px";c.style.transform=`scale(${data.scale}) rotate(${data.rotation}deg)`;
+ c.innerHTML=`<div class="charLabel">${esc(data.name)}</div><div class="hair"></div><div class="head"><div class="eye l"></div><div class="eye r"></div><div class="mouth"></div></div><div class="body" style="background:${data.color}"></div><div class="arm l"></div><div class="arm r"></div><div class="leg l"></div><div class="leg r"></div>`;
+ $("stage").appendChild(c);drag(c);c.addEventListener("click",e=>{e.stopPropagation();selectCharacter(c)});
 }
-
-function makeDraggable(element){
-
-  let dragging=false;
-  let startX=0;
-  let startY=0;
-  let originalLeft=0;
-  let originalTop=0;
-
-  function start(e){
-
-    e.preventDefault();
-
-    selectCharacter(element);
-
-    dragging=true;
-
-    const point=e.touches ? e.touches[0] : e;
-
-    startX=point.clientX;
-    startY=point.clientY;
-
-    originalLeft=element.offsetLeft;
-    originalTop=element.offsetTop;
-
-    document.addEventListener("mousemove",move);
-    document.addEventListener("mouseup",end);
-
-    document.addEventListener("touchmove",move,{passive:false});
-    document.addEventListener("touchend",end);
-
-  }
-
-  function move(e){
-
-    if(!dragging)return;
-
-    e.preventDefault();
-
-    const point=e.touches ? e.touches[0] : e;
-
-    const stage=document.getElementById("stage");
-
-    let x=originalLeft+(point.clientX-startX);
-    let y=originalTop+(point.clientY-startY);
-
-    x=Math.max(0,Math.min(stage.clientWidth-element.offsetWidth,x));
-    y=Math.max(0,Math.min(stage.clientHeight-element.offsetHeight,y));
-
-    element.style.left=x+"px";
-    element.style.top=y+"px";
-    element.style.bottom="auto";
-
-    updateCharacterPanel();
-
-  }
-
-  function end(){
-
-    if(!dragging)return;
-
-    dragging=false;
-
-    document.removeEventListener("mousemove",move);
-    document.removeEventListener("mouseup",end);
-
-    document.removeEventListener("touchmove",move);
-    document.removeEventListener("touchend",end);
-
-    saveHistory();
-
-  }
-
-  element.addEventListener("mousedown",start);
-  element.addEventListener("touchstart",start,{passive:false});
-
+function esc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function selectCharacter(c){document.querySelectorAll(".char").forEach(x=>x.classList.remove("selected"));c.classList.add("selected");selected=c;syncPanel()}
+function charData(){return scenes[currentScene].characters.find(x=>x.id===selected?.dataset.id)}
+function syncPanel(){
+ const d=charData();if(!d)return;
+ $("charName").value=d.name;$("charX").value=Math.round(d.x);$("charY").value=Math.round(d.y);$("charScale").value=d.scale;$("charRotation").value=d.rotation;$("bodyColor").value=d.color;
 }
-
-function updateCharacterPanel(){
-
-  if(!selectedCharacter)return;
-
-  const c=selectedCharacter;
-
-  document.getElementById("charName").value=
-    c.querySelector(".character-name")?.textContent || "Character";
-
-  document.getElementById("charX").value=
-    Math.round(c.offsetLeft);
-
-  document.getElementById("charY").value=
-    Math.round(c.offsetTop);
-
-  const transform=c.style.transform || "";
-
-  const scaleMatch=transform.match(/scale\(([^)]+)\)/);
-  const rotateMatch=transform.match(/rotate\(([^)]+)deg\)/);
-
-  document.getElementById("charScale").value=
-    scaleMatch ? scaleMatch[1] : 1;
-
-  document.getElementById("charRotation").value=
-    rotateMatch ? rotateMatch[1] : 0;
-
+function drag(el){
+ let down=false,sx,sy,ox,oy;
+ const start=e=>{
+  e.preventDefault();selectCharacter(el);down=true;let p=e.touches?e.touches[0]:e;sx=p.clientX;sy=p.clientY;ox=el.offsetLeft;oy=el.offsetTop;
+  document.addEventListener("mousemove",move);document.addEventListener("mouseup",end);document.addEventListener("touchmove",move,{passive:false});document.addEventListener("touchend",end);
+ };
+ const move=e=>{if(!down)return;e.preventDefault();let p=e.touches?e.touches[0]:e;let st=$("stage");let x=Math.max(0,Math.min(st.clientWidth-el.offsetWidth,ox+p.clientX-sx));let y=Math.max(0,Math.min(st.clientHeight-el.offsetHeight,oy+p.clientY-sy));el.style.left=x+"px";el.style.top=y+"px";let d=charData();if(d){d.x=x;d.y=y}syncPanel()};
+ const end=()=>{if(!down)return;down=false;document.removeEventListener("mousemove",move);document.removeEventListener("mouseup",end);document.removeEventListener("touchmove",move);document.removeEventListener("touchend",end);saveState()};
+ el.addEventListener("mousedown",start);el.addEventListener("touchstart",start,{passive:false});
 }
-
-function updateCharacterName(value){
-
-  if(!selectedCharacter)return;
-
-  selectedCharacter.querySelector(".character-name").textContent=value;
-
-  saveHistory();
-
-}
-
-function updateCharacterPosition(){
-
-  if(!selectedCharacter)return;
-
-  selectedCharacter.style.left=
-    document.getElementById("charX").value+"px";
-
-  selectedCharacter.style.top=
-    document.getElementById("charY").value+"px";
-
-  selectedCharacter.style.bottom="auto";
-
-  saveHistory();
-
-}
-
-function updateCharacterScale(){
-
-  if(!selectedCharacter)return;
-
-  const scale=document.getElementById("charScale").value || 1;
-
-  const rotation=document.getElementById("charRotation").value || 0;
-
-  selectedCharacter.style.transform=
-    `scale(${scale}) rotate(${rotation}deg)`;
-
-  saveHistory();
-
-}
-
-function updateCharacterRotation(){
-
-  updateCharacterScale();
-
-}
-
-function updateBodyColor(){
-
-  if(!selectedCharacter)return;
-
-  const color=document.getElementById("bodyColor").value;
-
-  selectedCharacter.querySelector(".body").style.background=color;
-
-  saveHistory();
-
-}
-
-function deleteSelected(){
-
-  if(!selectedCharacter){
-
-    toast("Select a character first");
-    return;
-
-  }
-
-  selectedCharacter.remove();
-
-  selectedCharacter=null;
-
-  saveHistory();
-
-  toast("Character deleted");
-
-}
-
-/* =========================================================
-   PROPS
-   ========================================================= */
-
-function addCloud(){
-
-  const cloud=document.createElement("div");
-
-  cloud.className="cloud";
-
-  cloud.style.left="30%";
-  cloud.style.top="20%";
-
-  document.getElementById("stage").appendChild(cloud);
-
-  toast("Cloud added");
-
-}
-
-function clearStage(){
-
-  document.querySelectorAll(".character,.cloud").forEach(el=>{
-    el.remove();
-  });
-
-  selectedCharacter=null;
-
-  document.getElementById("dialogueBox").classList.remove("show");
-
-  saveHistory();
-
-  toast("Scene cleared");
-
-}
-
-/* =========================================================
-   BACKGROUNDS
-   ========================================================= */
-
-function openBackgrounds(){
-
-  document.getElementById("backgroundModal").classList.add("open");
-
-}
-
-function closeBackgrounds(){
-
-  document.getElementById("backgroundModal").classList.remove("open");
-
-}
-
-function setBackground(type){
-
-  const sky=document.getElementById("sky");
-  const ground=document.querySelector(".ground");
-  const sun=document.getElementById("sun");
-
-  if(type==="day"){
-
-    sky.style.background=
-      "linear-gradient(#72c9ff,#dff7ff)";
-
-    ground.style.background="#63bd59";
-
-    sun.style.display="block";
-
-  }
-
-  if(type==="sunset"){
-
-    sky.style.background=
-      "linear-gradient(#ff7e79,#ffc76b 55%,#8d7cc7)";
-
-    ground.style.background="#43553f";
-
-    sun.style.display="block";
-
-  }
-
-  if(type==="night"){
-
-    sky.style.background=
-      "linear-gradient(#08122f,#16234e,#263c66)";
-
-    ground.style.background="#16251c";
-
-    sun.style.display="none";
-
-  }
-
-  if(type==="forest"){
-
-    sky.style.background=
-      "linear-gradient(#78c9ee,#d4f1df)";
-
-    ground.style.background="#2f8d45";
-
-    sun.style.display="block";
-
-  }
-
-  if(type==="city"){
-
-    sky.style.background=
-      "linear-gradient(#7898bd,#d6d9df)";
-
-    ground.style.background="#555";
-
-    sun.style.display="none";
-
-  }
-
-  if(type==="space"){
-
-    sky.style.background=
-      "radial-gradient(circle at 30% 30%,#38468c,#080a18 65%)";
-
-    ground.style.display="none";
-
-    sun.style.display="none";
-
-  }else{
-
-    ground.style.display="block";
-
-  }
-
-  closeBackgrounds();
-
-  saveHistory();
-
-  toast(type+" background selected");
-
-}
-
-/* =========================================================
-   DIALOGUE
-   ========================================================= */
-
-function addDialogue(){
-
-  document.getElementById("dialogueBox").classList.add("show");
-
-  toast("Dialogue added");
-
-}
-
-function toggleDialogue(){
-
-  document.getElementById("dialogueBox")
-    .classList.toggle("show");
-
-}
-
-function updateDialogue(){
-
-  document.getElementById("dialogueName").textContent=
-    document.getElementById("dialogueCharacter").value;
-
-  document.getElementById("dialogueText").textContent=
-    document.getElementById("dialogueInput").value;
-
-}
-
-/* =========================================================
-   SCENE
-   ========================================================= */
-
-function updateSceneTitle(value){
-
-  document.getElementById("stageText").textContent=value;
-
-}
-
-function updateDuration(value){
-
-  if(value<1)value=1;
-  if(value>120)value=120;
-
-  document.getElementById("duration").value=value;
-
-}
-
-function addScene(){
-
-  const sceneCount=
-    document.querySelectorAll(".scene-item").length+1;
-
-  toast("Scene "+sceneCount+" created");
-
-}
-
-function duplicateScene(){
-
-  const chars=
-    [...document.querySelectorAll(".character")];
-
-  chars.forEach(old=>{
-
-    const clone=old.cloneNode(true);
-
-    clone.style.left=
-      (old.offsetLeft+30)+"px";
-
-    clone.style.top=
-      (old.offsetTop-20)+"px";
-
-    document.getElementById("stage").appendChild(clone);
-
-    makeDraggable(clone);
-
-  });
-
-  toast("Scene duplicated");
-
-}
-
-/* =========================================================
-   TIMELINE
-   ========================================================= */
-
+function updateCharName(){let d=charData();if(!d)return;d.name=$("charName").value;selected.querySelector(".charLabel").textContent=d.name;saveState()}
+function updateCharPos(){let d=charData();if(!d)return;d.x=+$("charX").value;d.y=+$("charY").value;selected.style.left=d.x+"px";selected.style.top=d.y+"px";saveState()}
+function updateCharTransform(){let d=charData();if(!d)return;d.scale=+$("charScale").value||1;d.rotation=+$("charRotation").value||0;selected.style.transform=`scale(${d.scale}) rotate(${d.rotation}deg)`;saveState()}
+function updateBody(){let d=charData();if(!d)return;d.color=$("bodyColor").value;selected.querySelector(".body").style.background=d.color;saveState()}
+function deleteCharacter(){let d=charData();if(!d){toast("Select a character");return}scenes[currentScene].characters=scenes[currentScene].characters.filter(x=>x.id!==d.id);selected.remove();selected=null;saveState();toast("Character deleted")}
+function addProp(){const c=document.createElement("div");c.className="cloud";c.style.left="35%";c.style.top="25%";$("stage").appendChild(c);toast("Prop added")}
+function showDialogue(){scenes[currentScene].dialogue.visible=true;$("dialogue").classList.add("show");saveState()}
+function hideDialogue(){scenes[currentScene].dialogue.visible=false;$("dialogue").classList.remove("show");saveState()}
+function updateDialogue(){let s=scenes[currentScene];s.dialogue.speaker=$("speaker").value;s.dialogue.text=$("dialogueInput").value;$("dname").textContent=s.dialogue.speaker;$("dtext").textContent=s.dialogue.text;saveState()}
+function openBackgrounds(){$("backgroundModal").classList.add("open")}
+function closeBackgrounds(){$("backgroundModal").classList.remove("open")}
+function background(type,save=true){
+ let s=scenes[currentScene];s.background=type;let sky=$("sky"),g=$("ground"),sun=$("sun");
+ const map={day:["linear-gradient(#62c5fa,#d9f5ff)","#55ad4d",true],sunset:["linear-gradient(#ff6f70,#ffc66b 55%,#7669a7)","#4b5140",true],night:["linear-gradient(#07112e,#182653,#263a61)","#142218",false],forest:["linear-gradient(#73c7e9,#d8f3df)","#2d8d43",true],city:["linear-gradient(#7897b8,#d9dce1)","#555",false],space:["radial-gradient(circle at 30% 30%,#3b438d,#070914 65%)","#111",false]};
+ let a=map[type];sky.style.background=a[0];g.style.background=a[1];sun.style.display=a[2]?"block":"none";g.style.display=type==="space"?"none":"block";if(save)saveState();closeBackgrounds();toast(type+" background")}
+function setRatio(r,save=true){ratio=r;scenes[currentScene].ratio=r;$("ratioLabel").textContent=r;$("formatSelect").value=r;let st=$("stage");if(r==="16:9")st.style.aspectRatio="16/9";if(r==="9:16")st.style.aspectRatio="9/16";if(r==="1:1")st.style.aspectRatio="1/1";if(save)saveState()}
+function changeRatio(){let n=ratio==="16:9"?"9:16":ratio==="9:16"?"1:1":"16:9";setRatio(n)}
+function addScene(){scenes.push(blankScene("Scene "+(scenes.length+1)));currentScene=scenes.length-1;renderSceneList();renderScene();saveState();toast("New scene created")}
+function renderRuler(){let r=$("ruler"),dur=+$("duration").value||10;r.innerHTML="";for(let i=0;i<=dur;i++){let d=document.createElement("div");d.className="tick";d.textContent=i+"s";r.appendChild(d)}scenes[currentScene].duration=dur}
 function addKeyframe(){
-
-  const track=document.getElementById("characterTrack");
-
-  const key=document.createElement("div");
-
-  key.className="keyframe";
-
-  key.style.left=(currentTime*60)+"px";
-
-  track.appendChild(key);
-
-  keyframes.push({
-    time:currentTime
-  });
-
-  toast("Keyframe added");
-
+ if(!selected){toast("Select a character first");return}
+ let d=charData();let t=Math.round(currentTime*10)/10;
+ scenes[currentScene].keyframes.push({id:d.id,time:t,x:d.x,y:d.y,scale:d.scale,rotation:d.rotation});
+ renderKeyframes();saveState();toast("Keyframe added at "+t.toFixed(1)+"s")
 }
-
-function timelinePlay(){
-
-  if(isPlaying)return;
-
-  isPlaying=true;
-
-  const duration=
-    Number(document.getElementById("duration").value)||10;
-
-  playTimer=setInterval(()=>{
-
-    currentTime+=0.1;
-
-    if(currentTime>duration){
-
-      currentTime=0;
-
-    }
-
-    document.getElementById("playhead").style.left=
-      (currentTime*60)+"px";
-
-  },100);
-
+function renderKeyframes(){
+ $("charTrack").innerHTML="";$("dialogueTrack").innerHTML="";
+ scenes[currentScene].keyframes.forEach(k=>{let e=document.createElement("div");e.className="key";e.style.left=(k.time*60)+"px";e.title=k.time+"s";$("charTrack").appendChild(e)});
+ if(scenes[currentScene].dialogue.visible){let e=document.createElement("div");e.className="key";e.style.left="0";$("dialogueTrack").appendChild(e)}
 }
-
-function timelinePause(){
-
-  isPlaying=false;
-
-  clearInterval(playTimer);
-
+function timelinePlay(){if(playing)return;playing=true;timer=setInterval(()=>{currentTime+=.1;let dur=+scenes[currentScene].duration||10;if(currentTime>dur)currentTime=0;applyKeyframes();$("playhead").style.left=(currentTime*60)+"px"},100)}
+function timelinePause(){playing=false;clearInterval(timer)}
+function applyKeyframes(){
+ let s=scenes[currentScene];s.characters.forEach(c=>{let ks=s.keyframes.filter(k=>k.id===c.id).sort((a,b)=>a.time-b.time);if(!ks.length)return;let prev=ks[0];for(const k of ks){if(k.time<=currentTime)prev=k}let el=document.querySelector(`.char[data-id="${c.id}"]`);if(el){el.style.left=prev.x+"px";el.style.top=prev.y+"px";el.style.transform=`scale(${prev.scale}) rotate(${prev.rotation}deg)`}});
 }
-
-function previewAnimation(){
-
-  timelinePause();
-
-  currentTime=0;
-
-  document.getElementById("playhead").style.left="0px";
-
-  timelinePlay();
-
-  toast("Preview playing");
-
+function preview(){timelinePause();currentTime=0;$("playhead").style.left="0";timelinePlay();toast("Preview playing")}
+async function recordVoice(){
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast("Voice recording is not supported here");return}
+ if(mediaRecorder&&mediaRecorder.state==="recording"){mediaRecorder.stop();return}
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  audioChunks=[];mediaRecorder=new MediaRecorder(stream);
+  mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+  mediaRecorder.onstop=()=>{voiceBlob=new Blob(audioChunks,{type:"audio/webm"});let url=URL.createObjectURL(voiceBlob);$("voicePlayer").src=url;$("voicePlayer").style.display="block";$("recordStatus").textContent="Voice recording ready.";stream.getTracks().forEach(t=>t.stop());toast("Recording saved in this session")};
+  mediaRecorder.start();$("recordStatus").textContent="🔴 Recording... tap Record Voice again to stop.";toast("Recording started");
+ }catch(e){toast("Microphone permission was denied")}
 }
-
-/* =========================================================
-   SAVE / LOAD
-   ========================================================= */
-
-function getProjectData(){
-
-  return {
-
-    name:document.getElementById("sceneName").value,
-
-    title:document.getElementById("sceneTitle").value,
-
-    duration:document.getElementById("duration").value,
-
-    dialogue:{
-
-      character:document.getElementById("dialogueCharacter").value,
-
-      text:document.getElementById("dialogueInput").value,
-
-      visible:
-        document.getElementById("dialogueBox")
-        .classList.contains("show")
-
-    },
-
-    stage:document.getElementById("stage").innerHTML
-
-  };
-
-}
-
-function saveProject(){
-
-  const data=getProjectData();
-
-  localStorage.setItem(
-    "cartoonStudioProject",
-    JSON.stringify(data)
-  );
-
-  toast("Project saved on this phone");
-
-}
-
-function loadProject(){
-
-  const raw=
-    localStorage.getItem("cartoonStudioProject");
-
-  if(!raw){
-
-    toast("No saved project found");
-    return;
-
-  }
-
-  const data=JSON.parse(raw);
-
-  document.getElementById("sceneName").value=data.name;
-  document.getElementById("sceneTitle").value=data.title;
-  document.getElementById("duration").value=data.duration;
-
-  document.getElementById("stage").innerHTML=data.stage;
-
-  document.getElementById("dialogueCharacter").value=
-    data.dialogue.character;
-
-  document.getElementById("dialogueInput").value=
-    data.dialogue.text;
-
-  document.getElementById("dialogueName").textContent=
-    data.dialogue.character;
-
-  document.getElementById("dialogueText").textContent=
-    data.dialogue.text;
-
-  if(data.dialogue.visible){
-
-    document.getElementById("dialogueBox")
-      .classList.add("show");
-
-  }
-
-  document.querySelectorAll(".character").forEach(c=>{
-    makeDraggable(c);
-  });
-
-  toast("Project loaded");
-
-}
-
-function newProject(){
-
-  if(!confirm("Start a new project? Unsaved changes may be lost.")){
-    return;
-  }
-
-  document.getElementById("sceneName").value="Scene 1";
-  document.getElementById("sceneTitle").value="My Cartoon Episode";
-  document.getElementById("duration").value=10;
-
-  document.getElementById("stageText").textContent=
-    "My Cartoon Episode";
-
-  clearStage();
-
-  toast("New project created");
-
-}
-
-/* =========================================================
-   HISTORY
-   ========================================================= */
-
-function saveHistory(){
-
-  try{
-
-    const state=JSON.stringify(getProjectData());
-
-    history=history.slice(0,historyIndex+1);
-
-    history.push(state);
-
-    if(history.length>30){
-      history.shift();
-    }
-
-    historyIndex=history.length-1;
-
-  }catch(e){}
-
-}
-
-function undo(){
-
-  if(historyIndex<=0){
-
-    toast("Nothing to undo");
-    return;
-
-  }
-
-  historyIndex--;
-
-  restoreHistory(history[historyIndex]);
-
-  toast("Undo");
-
-}
-
-function redo(){
-
-  if(historyIndex>=history.length-1){
-
-    toast("Nothing to redo");
-    return;
-
-  }
-
-  historyIndex++;
-
-  restoreHistory(history[historyIndex]);
-
-  toast("Redo");
-
-}
-
-function restoreHistory(raw){
-
-  const data=JSON.parse(raw);
-
-  document.getElementById("sceneName").value=data.name;
-  document.getElementById("sceneTitle").value=data.title;
-  document.getElementById("duration").value=data.duration;
-
-  document.getElementById("stage").innerHTML=data.stage;
-
-  document.getElementById("dialogueCharacter").value=
-    data.dialogue.character;
-
-  document.getElementById("dialogueInput").value=
-    data.dialogue.text;
-
-  document.getElementById("dialogueName").textContent=
-    data.dialogue.character;
-
-  document.getElementById("dialogueText").textContent=
-    data.dialogue.text;
-
-  document.querySelectorAll(".character").forEach(c=>{
-    makeDraggable(c);
-  });
-
-}
-
-/* =========================================================
-   EXPORT
-   ========================================================= */
-
-function exportProject(){
-
-  document.getElementById("exportTitle").value=
-    document.getElementById("sceneTitle").value;
-
-  document.getElementById("exportModal").classList.add("open");
-
-}
-
-function closeExport(){
-
-  document.getElementById("exportModal")
-    .classList.remove("open");
-
-}
-
-function finishExport(){
-
-  const title=
-    document.getElementById("exportTitle").value;
-
-  const description=
-    document.getElementById("exportDescription").value;
-
-  const format=
-    document.getElementById("exportFormat").value;
-
-  const exportData={
-    title,
-    description,
-    format,
-    project:getProjectData()
-  };
-
-  const blob=new Blob(
-    [JSON.stringify(exportData,null,2)],
-    {type:"application/json"}
-  );
-
-  const url=URL.createObjectURL(blob);
-
-  const a=document.createElement("a");
-
-  a.href=url;
-
-  a.download=
-    title.replace(/[^a-z0-9]/gi,"_")+
-    "_cartoon_project.json";
-
-  a.click();
-
-  URL.revokeObjectURL(url);
-
-  closeExport();
-
-  toast("Project export downloaded");
-
-}
-
-/* =========================================================
-   STARTUP
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-  updateDialogue();
-
-  saveHistory();
-
-  /* Allow clicking the stage to deselect */
-
-  document.getElementById("stage")
-    .addEventListener("click",function(e){
-
-      if(e.target===this ||
-         e.target.classList.contains("sky") ||
-         e.target.classList.contains("ground")){
-
-        document.querySelectorAll(".character")
-          .forEach(c=>c.classList.remove("selected"));
-
-        selectedCharacter=null;
-
-      }
-
-    });
-
-});
-
-/* Keyboard shortcuts */
-
-document.addEventListener("keydown",e=>{
-
-  if(e.ctrlKey && e.key==="s"){
-
-    e.preventDefault();
-    saveProject();
-
-  }
-
-  if(e.ctrlKey && e.key==="z"){
-
-    e.preventDefault();
-    undo();
-
-  }
-
-  if(e.ctrlKey && e.key==="y"){
-
-    e.preventDefault();
-    redo();
-
-  }
-
-});
-
+function exportProject(){ $("exportTitle").value=$("projectName").value;$("exportModal").classList.add("open")}
+function closeExport(){$("exportModal").classList.remove("open")}
+function downloadProject(){
+ const data={app:"CartoonHub Studio",version:2,title:$("exportTitle").value,description:$("exportDesc").value,scenes};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=data.title.replace(/[^a-z0-9]/gi,"_")+"_CartoonHub_V2.json";a.click();URL.revokeObjectURL(a.href);closeExport();toast("Project downloaded")}
+function newProject(){if(!confirm("Start a new project?"))return;scenes=[blankScene("Scene 1")];currentScene=0;$("projectName").value="My Cartoon Episode";renderSceneList();renderScene();saveState();toast("New project")}
+function projectData(){return JSON.stringify({name:$("projectName").value,scenes})}
+function saveProject(){localStorage.setItem("cartoonhubV2",projectData());toast("Project saved on this phone")}
+function loadProject(){let x=localStorage.getItem("cartoonhubV2");if(!x){toast("No saved project");return}let d=JSON.parse(x);$("projectName").value=d.name||"My Cartoon Episode";scenes=d.scenes||[blankScene()];currentScene=0;renderSceneList();renderScene();toast("Project loaded")}
+function saveState(){let x=projectData();history=history.slice(0,historyPos+1);history.push(x);if(history.length>25)history.shift();historyPos=history.length-1}
+function restore(x){let d=JSON.parse(x);$("projectName").value=d.name;scenes=d.scenes;currentScene=Math.min(currentScene,scenes.length-1);renderSceneList();renderScene()}
+function undo(){if(historyPos<=0){toast("Nothing to undo");return}historyPos--;restore(history[historyPos]);toast("Undo")}
+function redo(){if(historyPos>=history.length-1){toast("Nothing to redo");return}historyPos++;restore(history[historyPos]);toast("Redo")}
+$("stage").addEventListener("click",e=>{if(e.target===$("stage")||e.target===$("sky")||e.target===$("ground")){document.querySelectorAll(".char").forEach(c=>c.classList.remove("selected"));selected=null}})
+document.addEventListener("keydown",e=>{if(e.ctrlKey&&e.key==="s"){e.preventDefault();saveProject()}if(e.ctrlKey&&e.key==="z"){e.preventDefault();undo()}if(e.ctrlKey&&e.key==="y"){e.preventDefault();redo()}})
+init();
 </script>
-
 </body>
-  </html>
+</html>
